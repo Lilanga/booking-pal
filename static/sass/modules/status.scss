@@ -1,0 +1,84 @@
+#app {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.status-view {
+  position: relative;
+  top: 0;
+  transition: top $transition-duration ease-in;
+
+  &.expanded {
+    top: -430px;
+    transition: top $transition-duration ease-in;
+  }
+
+  .status-details {
+    height: 410px;
+    padding: 40px;
+    background-color: $primary-color;
+    text-align: center;
+    color: white;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    position: relative;
+    z-index:100;
+
+    h1 {
+      margin-top: 40px;
+      font-family: 'Mark Pro Bold';
+      letter-spacing: 1.3px;
+      font-size: 80px;
+      width: 396px;
+    }
+
+    h2 {
+      font-family: 'Mark Pro Book';
+      letter-spacing: 0.5px;
+      font-size: 30px;
+      width: 396px;
+      height: 44px;
+    }
+
+    h3 {
+      height: 44px;
+      margin: 4px 0 28px 0;
+      font-family: 'Mark Pro Book';
+      letter-spacing: 0.5px;
+      font-size: 30px;
+    }
+
+    strong {
+      height: 10px ;
+      margin: 4px 0 28px 0;
+      font-family: 'Mark Pro Book';
+      letter-spacing: 0.5px;
+      font-size: 10;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-flow: row nowrap;
+      justify-content: center;
+
+      &.multiple {
+        button:last-child {
+          margin-left: 40px;
+        }
+      }
+
+      &.single {
+        margin: 51px 0 0 0;
+      }
+    }
+  }
+
+  &.booked {
+    .status-details {
+      background-color: $red;
+
+      h1 {
+        margin-top: 15px;
+      }
+    }
+  }
+}

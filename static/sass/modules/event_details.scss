@@ -1,0 +1,84 @@
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event-details {
+  position: relative;
+  background-color: $white;
+  height: 640px;
+  background-color: white;
+
+  .event-details-status {
+    width: 396px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    margin: 27px 0 12px 0;
+    font-size: 22px;
+    font-family: "Mark Pro Book";
+    color: $primary-color;
+  }
+
+  .event-details-name {
+    height: 88px;
+    width: 396px;
+    margin: 0 0 25px 0;
+    text-align: center;
+  }
+
+  .event-duration {
+    font-family: "Mark Pro Bold";
+    font-size: 30px;
+    height: 50px;
+    line-height: 50px;
+  }
+
+  .event-details-creator {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 40px 0 20px 0;
+  }
+
+  .event-details-description {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 40px 20px 20px 20px;
+    text-align: center;
+  }
+
+  .event-details-qr {
+    height: "auto";
+    margin: "0 auto";
+    max-width: 128px;
+    width: "100%";
+  }
+
+  .event-details-attendees {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+
+    li {
+      margin: 10px;
+    }
+  }
+
+  button.expand-btn {
+    position: absolute;
+    right: 50px;
+    top: -31.5px;
+    z-index: 101;
+
+    i {
+      transform: rotate(0deg);
+      transition: transform $transition-duration ease-in;
+    }
+
+    &.expanded i {
+      transition: transform $transition-duration ease-in;
+      transform: rotate(180deg);
+    }
+  }
+}
