@@ -1,6 +1,6 @@
 import { Route, HashRouter } from 'react-router-dom';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import App from './app';
 
 import '../static/sass/main.scss';
@@ -15,4 +15,5 @@ class MainComponent extends React.Component {
   }
 }
 
-render(<MainComponent />, document.getElementById('react-root'));
+const root = createRoot(document.getElementById('react-root'));
+root.render(<MainComponent />);

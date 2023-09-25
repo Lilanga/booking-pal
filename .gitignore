@@ -134,3 +134,4 @@ config/*.json
 
 *.swp
 .DS_Store
+build
