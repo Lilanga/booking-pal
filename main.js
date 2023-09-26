@@ -1,7 +1,7 @@
-const { app, session, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 require('@electron/remote/main').initialize();
 
-const google = require('googleapis');
+// const google = require('googleapis');
 const gcal = require('./src/gcal');
 const fs = require('fs');
 const readline = require('readline');
@@ -13,16 +13,6 @@ const SITINCATOR_CONFIG = path.resolve(CONFIG_DIR, 'sitincator.json');
 global.calendarName = '';
 
 let win;
-
-function createDirectory(directory) {
-  try {
-    fs.mkdirSync(directory);
-  } catch (err) {
-    if (err.code != 'EEXIST') {
-      throw err;
-    }
-  }
-}
 
 function writeConfiguration(calendar_id) {
   return new Promise((resolve, reject) => {
@@ -38,7 +28,7 @@ function writeConfiguration(calendar_id) {
 }
 
 function askForCalendarId() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout
@@ -128,8 +118,8 @@ app.on('ready', () => {
 
           ipcMain.on('calendar:quick-reservation', (event, duration) => {
             client.insertEvent(duration)
-              .then(response => { event.sender.send('calendar:quick-reservation-success', response)})
-              .catch(error => { event.sender.send('calendar:quick-reservation-failure', error)});
+              .then(response => { event.sender.send('calendar:quick-reservation-success', response);})
+              .catch(error => { event.sender.send('calendar:quick-reservation-failure', error);});
           }
           );
 
@@ -139,7 +129,7 @@ app.on('ready', () => {
               .catch(error => event.sender.send('calendar:finish-reservation-failure', error));
           });
         })
-        .catch((error) => {console.log(`error: ${error}`); process.exit()});
+        .catch((error) => {console.log(`error: ${error}`); process.exit();});
     }).catch(error => {
       console.error(error);
       process.exit();
@@ -153,7 +143,7 @@ app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
-})
+});
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
@@ -161,5 +151,5 @@ app.on('activate', () => {
   if (win === null) {
     createWindow();
   }
-})
+});
 

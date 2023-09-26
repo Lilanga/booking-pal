@@ -1,10 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import moment from 'moment';
 import { isEmpty } from 'lodash/lang';
 import { isAllDayEvent } from '../util';
 
-export default function EventDuration(props) {
-  const { event } = props;
+function EventDuration({event}) {
   const startTime = moment(event.start.dateTime);
   const endTime = moment(event.end.dateTime);
 
@@ -12,7 +12,7 @@ export default function EventDuration(props) {
     return null;
   }
 
-  const isAllDay = isAllDayEvent(event)
+  const isAllDay = isAllDayEvent(event);
   return (
     <p className="event-duration">
       {isAllDay ?
@@ -22,3 +22,9 @@ export default function EventDuration(props) {
     </p>
   );
 }
+
+EventDuration.propTypes = {
+  event: PropTypes.object,
+};
+
+export default EventDuration;

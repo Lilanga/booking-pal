@@ -9,12 +9,12 @@ prodConfig.plugins = [
       'NODE_ENV': JSON.stringify('production')
     }
   })
-]
+];
 
 prodConfig.output = {
   filename: 'bundle.js',
   path: __dirname + '/build',
   publicPath: './build/'
-}
+};
 
 module.exports = prodConfig;

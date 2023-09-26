@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import PropTypes, { func } from 'prop-types';
+import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 function Button(props) {
@@ -20,7 +20,7 @@ function Button(props) {
   useEffect(() => {
     return () => {
       clearTimeout(clickedTimer);
-    }
+    };
   }, []);
 
   const iconClasses = classNames('icon', `icon-${props.icon}`);
@@ -39,11 +39,12 @@ function Button(props) {
 Button.propTypes = {
   icon: PropTypes.string.isRequired,
   handleClick: PropTypes.func.isRequired,
-  disabled: PropTypes.bool
-}
+  disabled: PropTypes.bool,
+  className: PropTypes.string
+};
 
 Button.defaultProps = {
   disabled: false
-}
+};
 
 export default Button;

@@ -8,7 +8,7 @@ import Booked from './booked';
 import { isEmpty } from 'lodash/lang';
 
 
-export default function Status({ events, currentEvent, nextEvent, nextEventIdx, onQuickReservation, onFinishReservation, onShowSchedule }) {
+export default function Status({ currentEvent, nextEvent, onQuickReservation, onFinishReservation, onShowSchedule }) {
 
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -73,7 +73,7 @@ Status.propTypes = {
   onQuickReservation: PropTypes.func,
   onFinishReservation: PropTypes.func,
   onShowSchedule: PropTypes.func
-}
+};
 
 Status.defaultProps = {
   events: [],
@@ -83,4 +83,4 @@ Status.defaultProps = {
   onQuickReservation: () => { },
   onFinishReservation: () => { },
   onShowSchedule: () => { }
-}
+};

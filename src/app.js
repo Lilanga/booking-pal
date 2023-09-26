@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'
+import { webFrame } from 'electron';
+import { Link } from 'react-router-dom';
 import { ipcRenderer } from 'electron';
 import Status from './components/status';
 import Schedule from './components/schedule';
 import CheckConnection from './components/check_connection';
 import { currentEvent, nextEvent, nextEventIdx } from './util';
-import { STATUS_UPDATE_INTERVAL_MS, MILLISECONDS_PER_MINUTE } from './constants';
+import { STATUS_UPDATE_INTERVAL_MS } from './constants';
 
 // Disable pinch zooming
-require('electron').webFrame.setVisualZoomLevelLimits(1, 1);
+webFrame.setVisualZoomLevelLimits(1, 1);
 
 function currentHash() {
   return window.location.hash;
@@ -20,11 +21,11 @@ function isStatusView() {
 
 const isCheckConnectionView = () => {
   return /check_connection/.test(currentHash());
-}
+};
 
 const isScheduleView = () => {
   return /schedule/.test(currentHash());
-}
+};
 
 function App() {
   const [events, setEvents] = useState([]);
@@ -42,7 +43,8 @@ function App() {
       setEvents(processEvents(events));
     });
 
-    ipcRenderer.on('calendar:list-events-failure', (event, error) => {
+    ipcRenderer.on('calendar:list-events-failure', (_event, error) => {
+      console.error(error);
       window.location.hash = 'check_connection';
     });
 
@@ -55,7 +57,7 @@ function App() {
     return () => {
       ipcRenderer.removeAllListeners();
       clearInterval(updateEventsInterval);
-    }
+    };
   }, []);
 
   function setUpdateDisplayedEventsInterval() {
@@ -67,7 +69,7 @@ function App() {
   function processEvents(events) {
     events = markAllDayEvents(events);
     events = removeUnconfirmedEvents(events);
-    return events
+    return events;
   }
 
   function markAllDayEvents(events) {
@@ -76,7 +78,7 @@ function App() {
         return {
           ...event,
           isAllDay: false,
-        }
+        };
       } else {  // all day events received from api call don't have the dateTime field
         const start = new Date(event.start.date);
         start.setHours(0);
@@ -87,9 +89,9 @@ function App() {
           start: { ...event.start, dateTime: start },
           end: { ...event.end, dateTime: end },
           isAllDay: true,
-        }
+        };
       }
-    })
+    });
   }
 
   function removeUnconfirmedEvents(events) {
@@ -101,7 +103,7 @@ function App() {
   function handleQuickReservation(duration) {
     // duration is in minutes
     // if (duration * MILLISECONDS_PER_MINUTE > timeToNextEvent()) {
-    //   return
+    //   return;
     // }
     ipcRenderer.send('calendar:quick-reservation', duration);
   }
@@ -121,7 +123,7 @@ function App() {
       {isStatusView() ? <Status {...props} /> : isScheduleView() ? <Schedule {...props} /> : <CheckConnection {...props} />}
       {drawFooter()}
     </div>
-  )
+  );
 
   function drawFooter() {
     if (isCheckConnectionView())

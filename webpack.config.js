@@ -1,5 +1,3 @@
-const webpack = require('webpack');
-
 module.exports = {
   context: __dirname + '/src',
   entry: './entry.js',

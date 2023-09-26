@@ -1,4 +1,5 @@
 import { isEmpty } from 'lodash/lang';
+import PropTypes from 'prop-types';
 import React from 'react';
 import Button from './button';
 import { humanReadableDuration, timeLeft } from './../util';
@@ -6,7 +7,7 @@ import { humanReadableDuration, timeLeft } from './../util';
 const bookedStatusSubMessage = (currentEvent) => {
   const remainingTime = humanReadableDuration(timeLeft(currentEvent));
   return `for the next ${remainingTime}`;
-}
+};
 
 const Booked = ({ currentEvent, onClick}) => {
   const remainingTimeMessage = isEmpty(currentEvent) ? null : bookedStatusSubMessage(currentEvent);
@@ -21,6 +22,11 @@ const Booked = ({ currentEvent, onClick}) => {
       <h2>{remainingTimeMessage}</h2>
     </div>
   );
-}
+};
+
+Booked.propTypes = {
+  currentEvent: PropTypes.object.isRequired,
+  onClick: PropTypes.func.isRequired,
+};
 
 export default Booked;

@@ -5,7 +5,7 @@ import EventDuration from './event_duration';
 import { CSSTransition } from 'react-transition-group';
 import { isCurrent, timeLeft, isBeforeNow, isAfterNow } from '../util';
 
-export default function Schedule({ events, nextEvent, nextEventIdx, onQuickReservation, onFinishReservation, onShowSchedule }) {
+export default function Schedule({ events }) {
   const timeLinePositionRef = useRef(null);
 
   const scrollTimeLineIntoView = () => {
@@ -76,4 +76,4 @@ Schedule.propTypes = {
   onQuickReservation: PropTypes.func,
   onFinishReservation: PropTypes.func,
   onShowSchedule: PropTypes.func
-}
+};

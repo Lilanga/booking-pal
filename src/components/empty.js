@@ -7,5 +7,5 @@ export default function Empty() {
                 {'NO UPCOMING EVENTS'}
             </h3>
         </div>
-    )
+    );
 }

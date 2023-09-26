@@ -7,5 +7,5 @@ export default function CheckConnection() {
         <div className="icon"><i className="icon icon-no-connection"></i></div>
         <h3 className="text">Failed to connect to the Calendar Service</h3>
       </div>
-    )
+    );
 }

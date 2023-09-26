@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import QRCode from "react-qr-code";
 import Button from './button';
@@ -39,7 +39,7 @@ function EventDetails(props) {
           />
         </div>
       </div>
-  )
+  );
 }
 
 EventDetails.propTypes = {
@@ -48,7 +48,7 @@ EventDetails.propTypes = {
   expanded: PropTypes.bool,
   handleShowSchedule: PropTypes.func.isRequired,
   handleExpandDetails: PropTypes.func.isRequired,
-}
+};
 
 EventDetails.defaultProps = {
   expanded: false,
