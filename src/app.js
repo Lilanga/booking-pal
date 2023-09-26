@@ -115,13 +115,13 @@ function App() {
   }
 
 
-    const props = { events, currentEvent: currentEvent(events), nextEvent: nextEvent(events), nextEventIdx: nextEventIdx(events), onQuickReservation: handleQuickReservation, onFinishReservation: handleFinishReservation, onShowSchedule: handleShowSchedule };
-    return (
-      <div id="app">
-        {isStatusView() ? <Status {...props} /> : isScheduleView() ? <Schedule {...props} /> : <CheckConnection {...props} />}
-        {drawFooter()}
-      </div>
-    )
+  const props = { events, currentEvent: currentEvent(events), nextEvent: nextEvent(events), nextEventIdx: nextEventIdx(events), onQuickReservation: handleQuickReservation, onFinishReservation: handleFinishReservation, onShowSchedule: handleShowSchedule };
+  return (
+    <div id="app">
+      {isStatusView() ? <Status {...props} /> : isScheduleView() ? <Schedule {...props} /> : <CheckConnection {...props} />}
+      {drawFooter()}
+    </div>
+  )
 
   function drawFooter() {
     if (isCheckConnectionView())
