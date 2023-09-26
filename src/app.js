@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom'
 import { ipcRenderer } from 'electron';
 import Status from './components/status';
@@ -6,6 +6,9 @@ import Schedule from './components/schedule';
 import CheckConnection from './components/check_connection';
 import { currentEvent, nextEvent, nextEventIdx } from './util';
 import { STATUS_UPDATE_INTERVAL_MS, MILLISECONDS_PER_MINUTE } from './constants';
+
+// Disable pinch zooming
+require('electron').webFrame.setVisualZoomLevelLimits(1, 1);
 
 function currentHash() {
   return window.location.hash;
@@ -23,49 +26,51 @@ const isScheduleView = () => {
   return /schedule/.test(currentHash());
 }
 
-// Disable pinch zooming
-require('electron').webFrame.setVisualZoomLevelLimits(1, 1);
+function App() {
+  const [events, setEvents] = useState([]);
+  let updateEventsInterval;
 
-export default class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = { events: [] };
-  }
-
-  componentDidMount() {
+  useEffect(() => {
     ipcRenderer.send('calendar:list-events');
-    this.setUpdateDisplayedEventsInterval();
+    setUpdateDisplayedEventsInterval();
 
     ipcRenderer.on('calendar:list-events-success', (event, events) => {
       if (isCheckConnectionView()) {
         window.location.hash = 'status';
       }
-      events = this.processEvents(events);
-      this.setState({ events })
+
+      setEvents(processEvents(events));
     });
+
     ipcRenderer.on('calendar:list-events-failure', (event, error) => {
       window.location.hash = 'check_connection';
     });
 
-    ipcRenderer.on('calendar:quick-reservation-success', (event, events) => this.setState({ events }));
+    ipcRenderer.on('calendar:quick-reservation-success', (event, events) => setEvents(events));
     ipcRenderer.on('calendar:quick-reservation-failure', (event, error) => console.error(error));
 
-    ipcRenderer.on('calendar:finish-reservation-success', (event, events) => this.setState({ events }));
+    ipcRenderer.on('calendar:finish-reservation-success', (event, events) => setEvents(events));
     ipcRenderer.on('calendar:finish-reservation-failure', (event, error) => console.error(error));
+
+    return () => {
+      ipcRenderer.removeAllListeners();
+      clearInterval(updateEventsInterval);
+    }
+  }, []);
+
+  function setUpdateDisplayedEventsInterval() {
+    updateEventsInterval = setInterval(() => {
+      ipcRenderer.send('calendar:list-events');
+    }, STATUS_UPDATE_INTERVAL_MS);
   }
 
-  componentWillUnmount() {
-    ipcRenderer.removeAllListeners();
-    clearInterval(this.updateEventsInterval);
-  }
-
-  processEvents(events) {
-    events = this.markAllDayEvents(events);
-    events = this.removeUnconfirmedEvents(events);
+  function processEvents(events) {
+    events = markAllDayEvents(events);
+    events = removeUnconfirmedEvents(events);
     return events
   }
 
-  markAllDayEvents(events) {
+  function markAllDayEvents(events) {
     return events?.map((event) => {
       if (event.start.dateTime) {
         return {
@@ -87,46 +92,38 @@ export default class App extends Component {
     })
   }
 
-  removeUnconfirmedEvents(events) {
+  function removeUnconfirmedEvents(events) {
     return events?.filter(event => {
       return event.status === 'confirmed';
     });
   }
 
-  handleQuickReservation(duration) {
+  function handleQuickReservation(duration) {
     // duration is in minutes
-    // if (duration * MILLISECONDS_PER_MINUTE > this.timeToNextEvent()) {
+    // if (duration * MILLISECONDS_PER_MINUTE > timeToNextEvent()) {
     //   return
     // }
     ipcRenderer.send('calendar:quick-reservation', duration);
   }
 
-  handleFinishReservation(id) {
+  function handleFinishReservation(id) {
     ipcRenderer.send('calendar:finish-reservation', id);
   }
 
-  handleShowSchedule() {
+  function handleShowSchedule() {
     window.location.hash = 'schedule';
   }
 
-  setUpdateDisplayedEventsInterval() {
-    this.updateEventsInterval = setInterval(() => {
-      ipcRenderer.send('calendar:list-events');
-    }, STATUS_UPDATE_INTERVAL_MS);
-  }
 
-  render() {
-    const { events } = this.state;
-    const props = { events, currentEvent: currentEvent(events), nextEvent: nextEvent(events), nextEventIdx: nextEventIdx(events), onQuickReservation: this.handleQuickReservation.bind(this), onFinishReservation: this.handleFinishReservation.bind(this), onShowSchedule: this.handleShowSchedule.bind(this) };
+    const props = { events, currentEvent: currentEvent(events), nextEvent: nextEvent(events), nextEventIdx: nextEventIdx(events), onQuickReservation: handleQuickReservation, onFinishReservation: handleFinishReservation, onShowSchedule: handleShowSchedule };
     return (
       <div id="app">
         {isStatusView() ? <Status {...props} /> : isScheduleView() ? <Schedule {...props} /> : <CheckConnection {...props} />}
-        {this.drawFooter()}
+        {drawFooter()}
       </div>
     )
-  }
 
-  drawFooter() {
+  function drawFooter() {
     if (isCheckConnectionView())
       return '';
 
@@ -144,3 +141,5 @@ export default class App extends Component {
     );
   }
 }
+
+export default App;

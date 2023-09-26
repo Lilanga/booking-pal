@@ -9,9 +9,9 @@ window.location.hash = 'status';
 
 class MainComponent extends React.Component {
   render() {
-    return <HashRouter>
+    return (<HashRouter>
       <Route path="/" component={App}/>
-    </HashRouter>;
+    </HashRouter>);
   }
 }
 

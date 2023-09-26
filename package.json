@@ -1,7 +1,7 @@
 {
-  "name": "sitincator",
-  "version": "1.0.0",
-  "description": "",
+  "name": "booking-pal",
+  "version": "0.1.0",
+  "description": "Meeting room display for BookingPal",
   "main": "main.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,19 +10,19 @@
     "build-dev": "NODE_ENV=development node_modules/.bin/webpack",
     "build": "NODE_ENV=production node_modules/.bin/webpack -p --config webpack.prod.config.js",
     "watch": "NODE_ENV=development ./node_modules/.bin/webpack-dev-server --hot",
-    "pack": "./node_modules/.bin/electron-packager . Sitincator",
-    "pack:pi": "./node_modules/.bin/electron-packager . Sitincator --platform=linux --arch=armv7l"
+    "pack": "./node_modules/.bin/electron-packager . BookingPal",
+    "pack:pi": "./node_modules/.bin/electron-packager . BookingPal --platform=linux --arch=armv7l"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/simplificator/sitincator.git"
+    "url": "git+https://github.com/Lilanga/booking-pal"
   },
-  "author": "smoothoperators",
+  "author": "bitchefs",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/simplificator/sitincator/issues"
+    "url": "https://github.com/Lilanga/booking-pal/issues"
   },
-  "homepage": "https://github.com/simplificator/sitincator#readme",
+  "homepage": "https://github.com/Lilanga/booking-pal#readme",
   "devDependencies": {
     "@babel/plugin-transform-object-rest-spread": "^7.22.15",
     "@babel/preset-env": "^7.22.20",
