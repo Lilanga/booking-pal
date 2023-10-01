@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { webFrame } from 'electron';
 import { Link } from 'react-router-dom';
 import { ipcRenderer } from 'electron';
+import { getEvents, updateEvents } from './store/actions';
 import Status from './components/status';
 import Schedule from './components/schedule';
 import CheckConnection from './components/check_connection';
@@ -27,7 +30,7 @@ const isScheduleView = () => {
   return /schedule/.test(currentHash());
 };
 
-function App() {
+function App({updateEvents}) {
   const [events, setEvents] = useState([]);
   let updateEventsInterval;
 
@@ -41,6 +44,7 @@ function App() {
       }
 
       setEvents(processEvents(events));
+      updateEvents(events);
     });
 
     ipcRenderer.on('calendar:list-events-failure', (_event, error) => {
@@ -48,11 +52,13 @@ function App() {
       window.location.hash = 'check_connection';
     });
 
-    ipcRenderer.on('calendar:quick-reservation-success', (event, events) => setEvents(events));
+    ipcRenderer.on('calendar:quick-reservation-success', (event, events) => {setEvents(events); updateEvents(events);});
     ipcRenderer.on('calendar:quick-reservation-failure', (event, error) => console.error(error));
 
-    ipcRenderer.on('calendar:finish-reservation-success', (event, events) => setEvents(events));
+    ipcRenderer.on('calendar:finish-reservation-success', (event, events) => {setEvents(events); updateEvents(events);} );
     ipcRenderer.on('calendar:finish-reservation-failure', (event, error) => console.error(error));
+
+    // getEvents();
 
     return () => {
       ipcRenderer.removeAllListeners();
@@ -144,4 +150,13 @@ function App() {
   }
 }
 
-export default App;
+const mapStateToProps = state => ({
+  events: state.events,
+});
+
+App.propTypes = {
+  getEvents: PropTypes.func.isRequired,
+  updateEvents: PropTypes.func.isRequired,
+};
+
+export default connect(mapStateToProps, {getEvents, updateEvents})(App);
