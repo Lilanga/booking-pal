@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import EventDetails from './event_details';
 import classNames from 'classnames';
 import { CSSTransition } from 'react-transition-group';
+import { quickReservation, finishReservation } from '../store/actions';
 import Free from './free';
 import Booked from './booked';
 import { isEmpty } from 'lodash/lang';
 
 
-export default function Status({ currentEvent, nextEvent, onQuickReservation, onFinishReservation, onShowSchedule }) {
+const Status = ({ currentEvent, nextEvent, onQuickReservation, onFinishReservation }) => {
 
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -58,21 +60,18 @@ export default function Status({ currentEvent, nextEvent, onQuickReservation, on
         isCurrent={isCurrent}
         expanded={detailsExpanded}
         handleExpandDetails={handleExpandDetails}
-        handleShowSchedule={onShowSchedule}
       />
 
     </div>
   );
-}
+};
 
 Status.propTypes = {
-  events: PropTypes.array,
   currentEvent: PropTypes.object,
   nextEvent: PropTypes.object,
   nextEventIdx: PropTypes.number,
   onQuickReservation: PropTypes.func,
   onFinishReservation: PropTypes.func,
-  onShowSchedule: PropTypes.func
 };
 
 Status.defaultProps = {
@@ -82,5 +81,12 @@ Status.defaultProps = {
   nextEventIdx: -1,
   onQuickReservation: () => { },
   onFinishReservation: () => { },
-  onShowSchedule: () => { }
 };
+
+const mapStateToProps = state => ({
+  currentEvent: state.calendar.currentEvent,
+  nextEvent: state.calendar.nextEvent,
+  nextEventIdx: state.calendar.nextEventIdx,
+});
+
+export default connect(mapStateToProps, {onQuickReservation: quickReservation, onFinishReservation: finishReservation})(Status);

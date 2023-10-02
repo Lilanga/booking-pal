@@ -48,7 +48,6 @@ EventDetails.propTypes = {
   event: PropTypes.object,
   isCurrent: PropTypes.bool,
   expanded: PropTypes.bool,
-  handleShowSchedule: PropTypes.func.isRequired,
   handleExpandDetails: PropTypes.func.isRequired,
 };
 

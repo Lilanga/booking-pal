@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import moment from 'moment';
 import EventDuration from './event_duration';
 import { CSSTransition } from 'react-transition-group';
 import { isCurrent, timeLeft, isBeforeNow, isAfterNow } from '../util';
 
-export default function Schedule({ events }) {
+const Schedule = ({ events }) => {
   const timeLinePositionRef = useRef(null);
 
   const scrollTimeLineIntoView = () => {
@@ -67,13 +68,14 @@ export default function Schedule({ events }) {
       </div>
     </CSSTransition>
   );
-}
+};
 
 Schedule.propTypes = {
   events: PropTypes.array,
-  nextEvent: PropTypes.object,
-  nextEventIdx: PropTypes.number,
-  onQuickReservation: PropTypes.func,
-  onFinishReservation: PropTypes.func,
-  onShowSchedule: PropTypes.func
 };
+
+const mapStateToProps = state => ({
+  events: state.calendar.events,
+});
+
+export default connect(mapStateToProps)(Schedule);

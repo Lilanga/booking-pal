@@ -33,4 +33,4 @@
     });
   };
 
-export default processEvents;
+export {processEvents};
