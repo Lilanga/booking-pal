@@ -15,7 +15,7 @@ class MainComponent extends React.Component {
    <Provider store={store}> 
     <HashRouter>
       <Route path="/" component={App}/>
-    </HashRouter>)
+    </HashRouter>
     </Provider>
     );
   }

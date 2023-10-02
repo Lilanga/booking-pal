@@ -4,7 +4,7 @@ import moment from 'moment';
 import { isEmpty } from 'lodash/lang';
 import { isAllDayEvent } from '../util';
 
-function EventDuration({event}) {
+const EventDuration = ({event}) => {
   const startTime = moment(event.start.dateTime);
   const endTime = moment(event.end.dateTime);
 
@@ -21,7 +21,7 @@ function EventDuration({event}) {
       }
     </p>
   );
-}
+};
 
 EventDuration.propTypes = {
   event: PropTypes.object,

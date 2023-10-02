@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
-const google = require('googleapis');
 const googleAuth = require('google-auth-library');
 const Client = require('./client');
 
@@ -24,7 +23,7 @@ function readCredentials() {
 }
 
 function askForOauthToken() {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout

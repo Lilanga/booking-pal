@@ -29,30 +29,22 @@ const isScheduleView = () => {
   return /schedule/.test(currentHash());
 };
 
-function App({getEvents}) {
+function App({getEvents, route}) {
   let updateEventsInterval;
 
   useEffect(() => {
     getEvents();
     setUpdateDisplayedEventsInterval();
 
-    ipcRenderer.on('calendar:list-events-success', () => {
-      if (isCheckConnectionView()) {
-        window.location.hash = 'status';
-      }
-
-    });
-
-    ipcRenderer.on('calendar:list-events-failure', (_event, error) => {
-      console.error(error);
-      window.location.hash = 'check_connection';
-    });
-
     return () => {
       ipcRenderer.removeAllListeners();
       clearInterval(updateEventsInterval);
     };
   }, []);
+
+  useEffect(() => {
+    window.location.hash = route;
+  }, [route]);
 
   function setUpdateDisplayedEventsInterval() {
     updateEventsInterval = setInterval(() => {
@@ -87,11 +79,12 @@ function App({getEvents}) {
 }
 
 const mapStateToProps = state => ({
-  events: state.events,
+  route: state.calendar.route,
 });
 
 App.propTypes = {
   getEvents: PropTypes.func.isRequired,
+  route: PropTypes.string.isRequired,
 };
 
 export default connect(mapStateToProps, {getEvents})(App);

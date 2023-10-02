@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-function Button(props) {
+const Button = (props) => {
 
   const [clicked, setClicked] = useState(false);
   let clickedTimer;
@@ -34,7 +34,7 @@ function Button(props) {
       <i className={iconClasses}></i>
     </button>
   );
-}
+};
 
 Button.propTypes = {
   icon: PropTypes.string.isRequired,

@@ -1,5 +1,6 @@
 import { isEmpty } from 'lodash/lang';
 import React from 'react';
+import PropTypes from 'prop-types';
 import Button from './button';
 import { humanReadableDuration, timeToEvent } from './../util';
 import { MILLISECONDS_PER_MINUTE } from './../constants';
@@ -40,6 +41,12 @@ const Free = ({ nextEvent, onClick15, onClick30}) => {
       <h2>{remainingTimeMessage}</h2>
     </div>
   );
+};
+
+Free.propTypes = {
+  nextEvent: PropTypes.object,
+  onClick15: PropTypes.func.isRequired,
+  onClick30: PropTypes.func.isRequired,
 };
 
 export default Free;

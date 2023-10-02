@@ -7,7 +7,7 @@ const MILLISECONDS_PER_MINUTE = 60000;
 
 module.exports = class Client {
   constructor(calendarId, auth) {
-    _calendarId = calendarId
+    _calendarId = calendarId,
     _auth = auth;
   }
 
@@ -49,7 +49,7 @@ module.exports = class Client {
         auth: _auth,
         calendarId: _calendarId,
         resource,
-      }, (err, response) => {
+      }, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -72,7 +72,7 @@ module.exports = class Client {
         calendarId: _calendarId,
         eventId,
         resource,
-      }, (err, response) => {
+      }, (err) => {
         if (err) {
           reject(err);
         } else {
@@ -94,9 +94,9 @@ module.exports = class Client {
           }
           if (now < start) {
             return true;
-          };
+          }
         });
         return item || {};
       });
   }
-}
+};
