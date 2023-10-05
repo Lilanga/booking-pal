@@ -1,4 +1,4 @@
-const {GET_EVENTS, FAILED_EVENT} = require('./types');
+const {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} = require('./types');
 const {processEvents} = require('../../gcal/eventHelpers');
 const electron = require('electron');
 
@@ -11,6 +11,11 @@ export const getEvents = () => dispatch => {
 
   // request events
   ipcRenderer.send('calendar:list-events');
+  dispatch({
+    type: GET_EVENTS_REQUEST,
+    payload: null
+  });
+
   ipcRenderer.on('calendar:list-events-success', (_item, items) => {
   const processedEvents = processEvents(items);
     dispatch({

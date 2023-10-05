@@ -1,9 +1,10 @@
-const {GET_EVENTS} = require('../../actions/types');
+const {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} = require('../../actions/types');
 const { nextEvent, currentEvent } = require('../../../util');
 const initialState = {
     events: [],
     error: null,
     route: 'status',
+    isLoading: false,
     };
 
     export default (state = initialState, action) => {
@@ -15,12 +16,19 @@ const initialState = {
                     nextEvent: nextEvent(action.payload),
                     currentEvent: currentEvent(action.payload),
                     error: null,
+                    isLoading: false,
                     route: 'status'
                 };
-            case 'FAILED_EVENT':
+            case GET_EVENTS_REQUEST:
+                return {
+                    ...state,
+                    isLoading: true,
+                };
+            case FAILED_EVENT:
                 return {
                     ...state,
                     error: action.payload,
+                    isLoading: false,
                     route: 'check_connection'
                 };
             default:
