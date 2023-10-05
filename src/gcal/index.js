@@ -8,7 +8,7 @@ const Client = require('./client');
 const CREDENTIALS_DIR = path.resolve(__dirname, '../../credentials');
 const CONFIG_DIR = path.resolve(__dirname, '../../config');
 const API_TOKEN = path.resolve(CREDENTIALS_DIR, 'token.json');
-const SITINCATOR_TOKEN = path.resolve(CREDENTIALS_DIR, 'sitincator.json');
+const RUNTIME_TOKEN = path.resolve(CREDENTIALS_DIR, 'dynamic_app_token.json');
 const GOOGLE_CLIENT_SECRET = path.resolve(CONFIG_DIR, 'client_secret.json');
 
 function readCredentials() {
@@ -41,7 +41,7 @@ function oauth2TokenInstructions(oauth2Client) {
     scope: ['https://www.googleapis.com/auth/calendar'],
   });
 
-  console.log('Authorize Sitincator to access your calendar by visiting this URL: ', authUrl);
+  console.log('Authorize Booking Pal to access your calendar by visiting this URL: ', authUrl);
 
   return new Promise((resolve, reject) => {
     askForOauthToken()
@@ -69,7 +69,7 @@ function createDirectory(directory) {
 
 function storeToken(token) {
   createDirectory(CREDENTIALS_DIR);
-  fs.writeFile(SITINCATOR_TOKEN, JSON.stringify(token),(err) => {
+  fs.writeFile(RUNTIME_TOKEN, JSON.stringify(token),(err) => {
     if (err)
       console.log(err);
   });
@@ -92,7 +92,7 @@ function getAccessToken(client, codebuffer) {
 
 function readOauth2Token(oauth2Client) {
   return new Promise((resolve, reject) => {
-    fs.readFile(SITINCATOR_TOKEN, (err, token) => {
+    fs.readFile(RUNTIME_TOKEN, (err, token) => {
       if (err) {
         fs.readFile(API_TOKEN, (err, code) => {
           if (err) {
@@ -131,12 +131,6 @@ exports.GCal = class GCal {
         oauth2Client.credentials = token;
         return new Client(_calendarId, oauth2Client);
       });
-      //      const auth = new googleAuth();
-      //      const oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-      //      return readOauth2Token(oauth2Client).then(token => {
-      //        oauth2Client.credentials = token;
-      //        return new Client(_calendarId, oauth2Client);
-      //      });
     }).catch(function(error) {
       console.log(error);
       exit(1);

@@ -8,7 +8,7 @@ const readline = require('readline');
 const path = require('path');
 
 const CONFIG_DIR = path.resolve(__dirname, './config');
-const SITINCATOR_CONFIG = path.resolve(CONFIG_DIR, 'sitincator.json');
+const CALENDAR_CONFIG = path.resolve(CONFIG_DIR, 'calendar.json');
 
 global.calendarName = '';
 
@@ -18,7 +18,7 @@ function writeConfiguration(calendar_id) {
   return new Promise((resolve, reject) => {
     let configuration = { calendar_id: calendar_id, title: "" };
 
-    fs.writeFile(SITINCATOR_CONFIG, JSON.stringify(configuration), error => {
+    fs.writeFile(CALENDAR_CONFIG, JSON.stringify(configuration), error => {
       if (error)
         reject(error);
       else
@@ -42,7 +42,7 @@ function askForCalendarId() {
 
 function readConfigurationFile() {
   return new Promise((resolve, reject) => {
-    fs.readFile(SITINCATOR_CONFIG, (error, content) => {
+    fs.readFile(CALENDAR_CONFIG, (error, content) => {
       if (error)
         reject(error);
       else
