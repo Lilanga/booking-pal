@@ -16,12 +16,11 @@ const Attendees = ({ event }) => {
   };
 
   return (
-    <>
-      <p className="event-details-creator">
-        {event.creator.displayName || event.creator.email}
-      </p>
-      <ul className="event-details-attendees">{attendees()}</ul>
-    </>
+    <>{
+      attendees() && <><p className="event-details-creator">
+        Attendees - {event.attendees.length}
+      </p><ul className="event-details-attendees">{attendees()}</ul></>
+    }</>
   );
 };
 
