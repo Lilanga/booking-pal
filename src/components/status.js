@@ -28,11 +28,11 @@ const Status = ({ currentEvent, nextEvent, onQuickReservation, onFinishReservati
 
   const rootClasses = classNames({
     'status-view': true,
-    'expanded': detailsExpanded,
-    'booked': isBooked(),
+    expanded: detailsExpanded,
+    booked: isBooked(),
   });
 
-  let statusComponent = isBooked() ?
+  const statusComponent = isBooked() ?
     <Booked
       onClick={() => onFinishReservation(currentEvent.id)}
       currentEvent={currentEvent}
@@ -45,7 +45,7 @@ const Status = ({ currentEvent, nextEvent, onQuickReservation, onFinishReservati
       key={1}
     />;
 
-  let isCurrent = !isEmpty(currentEvent);
+  const isCurrent = !isEmpty(currentEvent);
 
   return (
     <div className={rootClasses}>

@@ -16,7 +16,7 @@ let win;
 
 function writeConfiguration(calendar_id) {
   return new Promise((resolve, reject) => {
-    let configuration = { calendar_id: calendar_id, title: "" };
+    const configuration = { calendar_id: calendar_id, title: "" };
 
     fs.writeFile(CALENDAR_CONFIG, JSON.stringify(configuration), error => {
       if (error)
@@ -56,7 +56,7 @@ function readConfiguration() {
     readConfigurationFile()
       .then(configuration => resolve(configuration))
       .catch(error => {
-        if (error.code != 'ENOENT')
+        if (error.code !== 'ENOENT')
           reject(error);
         else {
           askForCalendarId()

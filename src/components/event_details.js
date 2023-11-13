@@ -36,7 +36,7 @@ import EventDuration from './event_duration';
             size={256}
             style={{ height: "auto", maxWidth: "100%", width: "100%" }}
             value={currentEvent.htmlLink}
-            viewBox={`0px 0px 256px 256px`}
+            viewBox={"0px 0px 256px 256px"}
           />
         </div>
       </div>

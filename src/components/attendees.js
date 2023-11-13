@@ -6,11 +6,11 @@ const Attendees = ({ event }) => {
     if (!event.attendees) {
       return null;
     } else {
-      return event.attendees.map((attendee, index) => {
+      return event.attendees.map((attendee) => {
         if (attendee.resource) {
           return null;
         }
-        return <li key={index}>{attendee.displayName || attendee.email}</li>;
+        return <li key={attendee.displayName || attendee.email}>{attendee.displayName || attendee.email}</li>;
       });
     }
   };

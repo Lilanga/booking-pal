@@ -40,7 +40,7 @@ function App({getEvents, route}) {
       ipcRenderer.removeAllListeners();
       clearInterval(updateEventsInterval);
     };
-  }, []);
+  }, [getEvents, updateEventsInterval]);
 
   useEffect(() => {
     window.location.hash = route;
@@ -65,8 +65,8 @@ function App({getEvents, route}) {
 
     const isStatus = isStatusView();
     const footerText = isStatus ?
-      <span>full schedule <i className="icon icon-arrow-right"></i></span> :
-      <span><i className="icon icon-arrow-left"></i> back to booking</span>;
+      <span>full schedule <i className="icon icon-arrow-right" /></span> :
+      <span><i className="icon icon-arrow-left" /> back to booking</span>;
 
     return (
       <footer>

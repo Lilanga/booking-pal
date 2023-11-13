@@ -21,7 +21,7 @@ const Button = (props) => {
     return () => {
       clearTimeout(clickedTimer);
     };
-  }, []);
+  }, [clickedTimer]);
 
   const iconClasses = classNames('icon', `icon-${props.icon}`);
   const btnClasses = classNames({
@@ -30,8 +30,8 @@ const Button = (props) => {
   }, props.className);
 
   return (
-    <button onClick={handleClick} className={btnClasses} disabled={clicked}>
-      <i className={iconClasses}></i>
+    <button onClick={handleClick} className={btnClasses} disabled={clicked} type="button">
+      <i className={iconClasses} />
     </button>
   );
 };

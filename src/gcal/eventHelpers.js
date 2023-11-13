@@ -1,8 +1,8 @@
 
   const processEvents = (events) => {
-    events = markAllDayEvents(events);
-    events = removeUnconfirmedEvents(events);
-    return events;
+    const allDayEvents = markAllDayEvents(events);
+    const confirmedEvents = removeUnconfirmedEvents(allDayEvents);
+    return confirmedEvents;
   };
 
   const markAllDayEvents = (events) => {

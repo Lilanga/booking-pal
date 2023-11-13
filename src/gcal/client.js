@@ -1,13 +1,14 @@
 const { google } = require('googleapis');
 
-let _auth, _calendarId;
+let _auth;
+let _calendarId;
 let calendar = google.calendar('v3');
 
 const MILLISECONDS_PER_MINUTE = 60000;
 
 module.exports = class Client {
   constructor(calendarId, auth) {
-    _calendarId = calendarId,
+    _calendarId = calendarId;
     _auth = auth;
     calendar = google.calendar({version: "v3", auth:_auth});
   }

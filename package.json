@@ -4,6 +4,7 @@
   "description": "Meeting room display for BookingPal",
   "main": "main.js",
   "scripts": {
+    "lint": "npx @biomejs/biome lint .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=development ./node_modules/.bin/electron .",
     "start-prod": "NODE_ENV=production ./node_modules/.bin/electron .",
@@ -27,6 +28,7 @@
     "@babel/plugin-transform-object-rest-spread": "^7.22.15",
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-react": "^7.22.15",
+    "@biomejs/biome": "1.3.3",
     "babel-core": "^6.26.3",
     "babel-loader": "^9.1.3",
     "babel-plugin-transform-class-properties": "^6.24.1",

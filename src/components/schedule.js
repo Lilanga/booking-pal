@@ -9,22 +9,14 @@ import { isCurrent, timeLeft, isBeforeNow, isAfterNow } from '../util';
 const Schedule = ({ events }) => {
   const timeLinePositionRef = useRef(null);
 
-  const scrollTimeLineIntoView = () => {
+  useEffect(() => {
     if (timeLinePositionRef.current) {
       timeLinePositionRef.current.scrollIntoView({ behavior: 'instant' });
-    }
-  };
-
-  useEffect(() => {
-    scrollTimeLineIntoView();
-  }, [events]);
-
-  useEffect(() => {
-    scrollTimeLineIntoView();
+    } 
   }, []);
 
   const timeLine = () => (
-    <span className="time-line"></span>
+    <span className="time-line" />
   );
 
   const renderedEvents = events.map((event, index) => {
@@ -32,8 +24,8 @@ const Schedule = ({ events }) => {
     const isBefore = eventBefore ? isBeforeNow(eventBefore) && isAfterNow(event) : isAfterNow(event);
 
     return (
-      <div className="flex-container schedule-event" key={index}>
-        {isBefore ? <span ref={timeLinePositionRef}></span> : null}
+      <div className="flex-container schedule-event" key={event.etag}>
+        {isBefore ? <span ref={timeLinePositionRef} /> : null}
         {isBefore ? timeLine() : null}
         <EventDuration event={event} />
         {isCurrent(event) ? timeLine() : null}
@@ -46,8 +38,8 @@ const Schedule = ({ events }) => {
   if (events.length > 0 && timeLeft(events[events.length - 1]) < 0) {
     renderedEvents.push((
       <div className="flex-container schedule-event" key={events.length}>
-        <span ref={timeLinePositionRef}></span>
-        <h3 className="schedule-event-name"></h3>
+        <span ref={timeLinePositionRef} />
+        <h3 className="schedule-event-name" />
         {timeLine()}
       </div>
     ));
