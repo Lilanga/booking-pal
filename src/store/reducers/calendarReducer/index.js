@@ -7,7 +7,8 @@ const initialState = {
     isLoading: false,
     };
 
-    export default (state = initialState, action) => {
+// biome-ignore lint/style/useDefaultParameterLast: defalut parameter applies to reducer initialisation only
+export  default (state = initialState, action) => {
         switch (action.type) {
             case GET_EVENTS:
                 return {
