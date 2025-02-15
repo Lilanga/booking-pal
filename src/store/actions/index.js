@@ -25,6 +25,7 @@ export const getEvents = () => dispatch => {
   });
 
   ipcRenderer.on('calendar:list-events-failure', (_event, error) => {
+    console.log(`error: ${error}`);
     dispatch({
       type: FAILED_EVENT,
       payload: error
