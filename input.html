@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Calendar Configurations</title>
+    <style>
+      body {
+        font-family: "Mark Pro", sans-serif;
+        font-size: 16px;
+        color: #2e2e2e;
+        background-color: #fff;
+      }
+
+      #app {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+      }
+      h2 {
+        margin-top: 0;
+        margin-bottom: 0;
+        font-family: "Mark Pro Book", sans-serif;
+        letter-spacing: 0.5px;
+        font-size: 30px;
+        width: 396px;
+        height: 44px;
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+      label {
+        font-size: 1.25rem;
+      }
+      input[type="text"] {
+        font-size: 1rem;
+        padding: 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 100%;
+        max-width: 300px;
+      }
+      input[type="submit"] {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, white, white);
+        padding: 0;
+        box-shadow: 3px 4px 5px rgba(46, 46, 46, 0.4);
+        transition: box-shadow 0.1s ease-in;
+        cursor: pointer;
+      }
+      input[type="submit"]:focus {
+        outline: none;
+      }
+      input[type="submit"].clicked {
+        box-shadow: 0px 0px 30px 10px rgba(200, 200, 200, 0.4);
+        transition: box-shadow 0.4s ease-in;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h2>Configure Calendar</h2>
+      <form id="calendar-form">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" required />
+        <label for="calendar-id">Calendar ID:</label>
+        <input type="text" id="calendar-id" name="calendar-id" required />
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+    <script>
+      const form = document.getElementById("calendar-form");
+      form.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const submitButton = document.querySelector("input[type=submit]");
+        submitButton.classList.add("clicked");
+        const calendarId = document.getElementById("calendar-id").value;
+        const title = document.getElementById("title").value;
+        window.electron.sendCalendarId(calendarId, title);
+      });
+    </script>
+  </body>
+</html>

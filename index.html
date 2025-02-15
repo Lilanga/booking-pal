@@ -1,23 +1,25 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Booking Pal</title>
-</head>
-<body>
-  <div id="react-root"></div>
-  
-  <script>
-    var bundlePath = './build/bundle.js';
-    var remote = require('@electron/remote');
+  <head>
+    <title>Booking Pal</title>
+  </head>
+  <body>
+    <div id="react-root"></div>
 
-    if(typeof process !== 'undefined' && process.env.NODE_ENV === 'development') {
-      bundlePath = 'http://localhost:8080/build/bundle.js';
-    }
+    <script>
+      var bundlePath = "./build/bundle.js";
+      var remote = require("@electron/remote");
 
-    var bundleScriptEl = document.createElement('script');
-    bundleScriptEl.src = bundlePath;
-    document.body.appendChild(bundleScriptEl);
-  </script>
+      if (
+        typeof process !== "undefined" &&
+        process.env.NODE_ENV === "development"
+      ) {
+        bundlePath = "http://localhost:8080/build/bundle.js";
+      }
 
-</body>
+      var bundleScriptEl = document.createElement("script");
+      bundleScriptEl.src = bundlePath;
+      document.body.appendChild(bundleScriptEl);
+    </script>
+  </body>
 </html>

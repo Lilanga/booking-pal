@@ -4,7 +4,7 @@ require('@electron/remote/main').initialize();
 // const google = require('googleapis');
 const gcal = require('./src/gcal');
 const fs = require('fs');
-const readline = require('readline');
+// const readline = require('readline');
 const path = require('path');
 
 const CONFIG_DIR = path.resolve(__dirname, './config');
@@ -14,31 +14,61 @@ global.calendarName = '';
 
 let win;
 
-function writeConfiguration(calendar_id) {
+function writeConfiguration(calendar_id, title) {
   return new Promise((resolve, reject) => {
-    const configuration = { calendar_id: calendar_id, title: "" };
+    const configuration = { calendar_id: calendar_id, title: title };
 
     fs.writeFile(CALENDAR_CONFIG, JSON.stringify(configuration), error => {
-      if (error)
+      if (error){
+        console.error(error);
         reject(error);
+      }
       else
         resolve(configuration);
     });
   });
 }
 
-function askForCalendarId() {
-  return new Promise((resolve) => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout
-    });
+ipcMain.handle('ask-for-calendar-id', async () => {
 
-    rl.question('Enter the calendar ID (found on the settings page of your calendar in Google Calendar): ', (answer) => {
-      resolve(answer);
+  // if win is not empty, hide it
+  if (win)
+    win.hide();
+
+  const configDialog = new BrowserWindow({
+    width: 480,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  configDialog.loadFile('input.html');
+
+  return new Promise((resolve) => {
+    ipcMain.once('calendar-id', (event, calendarId, title) => {
+      resolve({calendarId, title});
+      configDialog.close();
+      win.show();
     });
   });
-}
+});
+
+app.on('ready', () => {
+  win = new BrowserWindow({
+    width: 480,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: true,
+      enableRemoteModule: true,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  });
+
+  win.loadFile('index.html');
+});
 
 function readConfigurationFile() {
   return new Promise((resolve, reject) => {
@@ -55,12 +85,13 @@ function readConfiguration() {
   return new Promise((resolve, reject) => {
     readConfigurationFile()
       .then(configuration => resolve(configuration))
-      .catch(error => {
+      .catch(async error => {
+        console.error(error);
         if (error.code !== 'ENOENT')
           reject(error);
         else {
-          askForCalendarId()
-            .then(writeConfiguration)
+            const {calendarId, title} = await win.webContents.executeJavaScript('window.electron.askForCalendarId()');
+            writeConfiguration(calendarId, title)
             .then(configuration => resolve(configuration))
             .catch(error => reject(error));
         }
@@ -75,7 +106,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      enableRemoteModule: true
+      enableRemoteModule: true,
     }
   });
 
@@ -96,19 +127,33 @@ function createWindow() {
 }
 
 app.on('ready', () => {
+
+  // configWindow = new BrowserWindow({
+  //   webPreferences: {
+  //     preload: path.join(__dirname, 'preload.js')
+  //   }
+  // });
+
+  // configWindow.loadFile('index.html');
+  
   readConfiguration()
     .then(configuration => {
       const gcalApi = new gcal.GCal(configuration.calendar_id);
 
       gcalApi.authorize()
         .then(client => {
+          // close the configuration window
+          win.close();
           createWindow();
 
           global.calendarName = configuration.title;
 
           ipcMain.on('calendar:list-events', event => client.listEvents()
             .then(items => { event.sender.send('calendar:list-events-success', items);})
-            .catch(error => {event.sender.send('calendar:list-events-failure', error);})
+            .catch(error => {
+              console.error(error);
+              event.sender.send('calendar:list-events-failure', error);
+            })
           );
 
           ipcMain.on('calendar:status-event', event => client.statusEvent()
