@@ -1,10 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 require('@electron/remote/main').initialize();
 
-// const google = require('googleapis');
 const gcal = require('./src/gcal');
 const fs = require('fs');
-// const readline = require('readline');
 const path = require('path');
 
 const CONFIG_DIR = path.resolve(__dirname, './config');
@@ -127,14 +125,6 @@ function createWindow() {
 }
 
 app.on('ready', () => {
-
-  // configWindow = new BrowserWindow({
-  //   webPreferences: {
-  //     preload: path.join(__dirname, 'preload.js')
-  //   }
-  // });
-
-  // configWindow.loadFile('index.html');
   
   readConfiguration()
     .then(configuration => {

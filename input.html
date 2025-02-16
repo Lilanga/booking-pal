@@ -10,6 +10,7 @@
         font-size: 16px;
         color: #2e2e2e;
         background-color: #fff;
+        margin: auto;
       }
 
       #app {
@@ -17,18 +18,17 @@
         overflow: hidden;
         display: flex;
         flex-direction: column;
-        justify-content: center;
-        align-items: center;
+        justify-content: space-evenly;
+        align-items: stretch;
+        flex-wrap: wrap;
+        align-content: space-around;
       }
       h2 {
-        margin-top: 0;
-        margin-bottom: 0;
         font-family: "Mark Pro Book", sans-serif;
         letter-spacing: 0.5px;
-        font-size: 30px;
-        width: 396px;
-        height: 44px;
+        font-size: 38px;
         text-align: center;
+        margin: 0;
       }
       form {
         display: flex;
@@ -38,16 +38,18 @@
       }
       label {
         font-size: 1.25rem;
+        text-align: left;
+        display: block;
+        width: 100%;
       }
       input[type="text"] {
-        font-size: 1rem;
-        padding: 0.5rem;
+        font-size: 1.5rem;
+        padding: 1rem;
         border: 1px solid #ccc;
-        border-radius: 4px;
+        border-radius: 12px;
         width: 100%;
-        max-width: 300px;
       }
-      input[type="submit"] {
+      button {
         width: 150px;
         height: 150px;
         border-radius: 50%;
@@ -58,10 +60,10 @@
         transition: box-shadow 0.1s ease-in;
         cursor: pointer;
       }
-      input[type="submit"]:focus {
+      button:focus {
         outline: none;
       }
-      input[type="submit"].clicked {
+      button.clicked {
         box-shadow: 0px 0px 30px 10px rgba(200, 200, 200, 0.4);
         transition: box-shadow 0.4s ease-in;
       }
@@ -71,18 +73,77 @@
     <div id="app">
       <h2>Configure Calendar</h2>
       <form id="calendar-form">
-        <label for="title">Title:</label>
-        <input type="text" id="title" name="title" required />
+        <label for="title">Calendar Name:</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          placeholder="Room name"
+          required
+        />
+        <br />
         <label for="calendar-id">Calendar ID:</label>
-        <input type="text" id="calendar-id" name="calendar-id" required />
-        <input type="submit" value="Submit" />
+        <input
+          type="text"
+          id="calendar-id"
+          name="calendar-id"
+          placeholder="Enter calendar ID"
+          required
+        />
+        <br />
+        <button type="submit">
+          <svg
+            version="1.1"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:cc="http://creativecommons.org/ns#"
+            xmlns:dc="http://purl.org/dc/elements/1.1/"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            style=""
+            enable-background=""
+            id="Layer_1"
+            viewBox="-32 -32 128 128"
+          >
+            <defs>
+              <style>
+                .cls-1 {
+                  fill: none;
+                  stroke: #000;
+                  stroke-linecap: round;
+                  stroke-linejoin: round;
+                  stroke-width: 2px;
+                }
+              </style>
+            </defs>
+            <title></title>
+            <rect
+              class="cls-1"
+              height="47.33"
+              rx="10.9"
+              ry="10.9"
+              width="59.77"
+              x="2.11"
+              y="8.33"
+            ></rect>
+            <g>
+              <polyline
+                class="cls-1"
+                points="17.25 37.94 17.25 45.77 46.75 45.77 46.75 37.94"
+              ></polyline>
+              <polyline
+                class="cls-1"
+                points="23.16 29.98 32.03 38.85 40.84 30.04"
+              ></polyline>
+              <line class="cls-1" x1="32" x2="32" y1="38.85" y2="18.23"></line>
+            </g>
+          </svg>
+        </button>
       </form>
     </div>
     <script>
       const form = document.getElementById("calendar-form");
       form.addEventListener("submit", (event) => {
         event.preventDefault();
-        const submitButton = document.querySelector("input[type=submit]");
+        const submitButton = document.querySelector("button[type='submit']");
         submitButton.classList.add("clicked");
         const calendarId = document.getElementById("calendar-id").value;
         const title = document.getElementById("title").value;
