@@ -29,8 +29,8 @@ function writeConfiguration(calendar_id, title) {
 
 ipcMain.handle('ask-for-calendar-id', async () => {
 
-  // if win is not empty, hide it
-  if (win)
+  // if win is not empty and is visible, hide it
+  if (win && win.isVisible())
     win.hide();
 
   const configDialog = new BrowserWindow({
@@ -44,12 +44,13 @@ ipcMain.handle('ask-for-calendar-id', async () => {
   });
 
   configDialog.loadFile('input.html');
+  if (process.env.NODE_ENV !== 'development')
+    configDialog.setFullScreen(true);
 
   return new Promise((resolve) => {
     ipcMain.once('calendar-id', (event, calendarId, title) => {
       resolve({calendarId, title});
       configDialog.close();
-      win.show();
     });
   });
 });
@@ -65,6 +66,8 @@ app.on('ready', () => {
     }
   });
 
+  // if win is not empty, hide it at the beginning
+  win.hide();
   win.loadFile('index.html');
 });
 
@@ -98,6 +101,10 @@ function readConfiguration() {
 }
 
 function createWindow() {
+  // Close the previous window if it exists
+  if (win && !win.isDestroyed())
+    win.close();
+
   win = new BrowserWindow({
     width: 480,
     height: 800,
@@ -133,7 +140,6 @@ app.on('ready', () => {
       gcalApi.authorize()
         .then(client => {
           // close the configuration window
-          win.close();
           createWindow();
 
           global.calendarName = configuration.title;
