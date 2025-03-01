@@ -12,13 +12,16 @@
     "build": "cross-env NODE_ENV=production node_modules/.bin/webpack -p --config webpack.prod.config.js",
     "watch": "cross-env NODE_ENV=development ./node_modules/.bin/webpack-dev-server --hot",
     "pack": "./node_modules/.bin/electron-packager . BookingPal",
-    "pack:pi": "./node_modules/.bin/electron-packager . BookingPal --platform=linux --arch=armv7l"
+    "pack:win": "./node_modules/.bin/electron-packager . BookingPal --platform=win32 --arch=x64",
+    "pack:mac": "./node_modules/.bin/electron-packager . BookingPal --platform=darwin --arch=x64",
+    "pack:pi": "./node_modules/.bin/electron-packager . BookingPal --platform=linux --arch=armv7l",
+    "pack:linux": "./node_modules/.bin/electron-packager . BookingPal --platform=linux --arch=armv7l"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Lilanga/booking-pal"
   },
-  "author": "bitchefs",
+  "author": "bitchefs <lilanga@live.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/Lilanga/booking-pal/issues"
@@ -29,12 +32,13 @@
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-react": "^7.22.15",
     "@biomejs/biome": "1.3.3",
+    "@electron/packager": "^18.3.6",
     "babel-core": "^6.26.3",
     "babel-loader": "^9.1.3",
     "babel-plugin-transform-class-properties": "^6.24.1",
     "cross-env": "^7.0.3",
     "css-loader": "^6.8.1",
-    "electron-packager": "^17.1.2",
+    "electron": "^26.2.2",
     "eslint": "^8.50.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-import": "^2.28.1",
@@ -55,7 +59,6 @@
   "dependencies": {
     "@electron/remote": "^2.0.11",
     "classnames": "^2.3.2",
-    "electron": "^26.2.2",
     "google-auth-library": "^9.0.0",
     "googleapis": "^126.0.1",
     "normalize.css": "^8.0.1",
