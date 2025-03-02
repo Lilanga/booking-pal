@@ -40,29 +40,29 @@ i.icon {
   background-size: 100%;
 
   &.icon-15-min {
-    background-image: url('../../icons/15.svg');
+    background-image: url('../icons/15.svg');
     background-position: center 4px;
   }
 
   &.icon-30-min {
-    background-image: url('../../icons/30.svg');
+    background-image: url('../icons/30.svg');
     background-position: center 4px;
   }
 
   &.icon-arrow-up {
-    background-image: url('../../icons/arrow-up.svg');
+    background-image: url('../icons/arrow-up.svg');
   }
 
   &.icon-arrow-left {
-    background-image: url('../../icons/arrow-left.svg');
+    background-image: url('../icons/arrow-left.svg');
   }
 
   &.icon-arrow-right {
-    background-image: url('../../icons/arrow-right.svg');
+    background-image: url('../icons/arrow-right.svg');
   }
 
   &.icon-cancel {
-    background-image: url('../../icons/cancel.svg');
+    background-image: url('../icons/cancel.svg');
     background-position: center center;
     color: red;
   }
