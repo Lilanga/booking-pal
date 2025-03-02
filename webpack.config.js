@@ -1,10 +1,13 @@
+const path = require('path');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 module.exports = {
   context: `${__dirname}/src`,
   entry: './entry.js',
 
   output: {
     filename: 'bundle.js',
-    path: `${__dirname}/build`,
+    path: path.resolve(__dirname, 'dist'),
     publicPath: 'http://localhost:8080/build/'
   },
 
@@ -27,10 +30,20 @@ module.exports = {
         generator: {
           filename: './fonts/[name][ext]',
         },
+      },
+      {
+        test: /\.(png|svg|jpg|jpeg|gif)$/i,
+        type: 'asset/resource'
       }
     ]
   },
-
+plugins: [
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: '../static/icons', to: 'icons' }
+      ]
+    })
+  ],
   target: 'electron-renderer',
 
   devtool: 'eval-source-map',
