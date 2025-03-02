@@ -3,17 +3,17 @@
 
 GIT_DIR=$(pwd)
 cd /tmp
-rm -rf sitincator
-rm -rf sitincator
+rm -rf booking-pal
+rm -rf booking-pal
 git clone $GIT_DIR
-cd sitincator
+cd booking-pal
 
 NODE_ENV=development npm install
 NODE_ENV=production node_modules/.bin/webpack -p --config webpack.prod.config.js
 rm -rf node_modules
 
 NODE_ENV=production npm install
-rm -rf Sitincator-linux-armv7l
+rm -rf BookingPal-linux-armv7l
 npm run pack:pi
-rm Sitincator-linux-armv7l/resources/app/{config,credentials}/*
-zip -yr Sitincator-linux-armv7l.zip Sitincator-linux-armv7l/*
+rm BookingPal-linux-armv7l/resources/app/{config,credentials}/*
+zip -yr BookingPal-linux-armv7l.zip BookingPal-linux-armv7l/*
