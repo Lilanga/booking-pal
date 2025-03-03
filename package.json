@@ -15,7 +15,8 @@
     "pack:win": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=win32 --arch=x64",
     "pack:mac": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=darwin --arch=x64",
     "pack:pi": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=linux --arch=armv7l",
-    "pack:linux": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=linux --arch=armv7l",
+    "pack:linux": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=linux --arch=x64 --out=dist/linux && npm run build:deb",
+    "build:deb": "npx electron-installer-debian --src dist/BookingPal-linux-x64/ --dest dist/installers/ --arch armhf",
     "copy-assets": "node copy-assets.js"
   },
   "repository": {
