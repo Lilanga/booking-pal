@@ -118,7 +118,7 @@ function createWindow() {
   if (process.env.NODE_ENV !== 'development')
     win.setFullScreen(true);
 
-  // if (process.env.NODE_ENV === 'development')
+  if (process.env.NODE_ENV === 'development')
     win.webContents.openDevTools();
 
   win.loadURL(`file://${__dirname}/index.html`);
