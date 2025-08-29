@@ -3,13 +3,9 @@ import humanizeDuration from 'humanize-duration';
 export const nextEvent = (events) => {
   const now = new Date().getTime();
 
-  const sortedEvents = events?.sort(function(a, b) {
-    return new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime();
-  });
+  const sortedEvents = events?.sort((a, b) => new Date(a.start.dateTime).getTime() - new Date(b.start.dateTime).getTime());
 
-  const futureEvents = sortedEvents?.filter(function(event) {
-    return new Date(event.start.dateTime).getTime() > now;
-  });
+  const futureEvents = sortedEvents?.filter((event) => new Date(event.start.dateTime).getTime() > now);
 
   return futureEvents? futureEvents[0] : {};
 };
@@ -23,7 +19,7 @@ export const nextEventIdx = (events) => {
 export const currentEvent = (events) => {
   const now = new Date().getTime();
 
-  const currentEvents = events?.filter(function(event) {
+  const currentEvents = events?.filter((event) => {
     const eventStart = new Date(event.start.dateTime).getTime();
     const eventEnd = new Date(event.end.dateTime).getTime();
 

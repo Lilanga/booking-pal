@@ -1,36 +1,46 @@
 const {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} = require('./types');
 const {processEvents} = require('../../gcal/eventHelpers');
-const electron = require('electron');
-
-const {ipcRenderer} = electron;
 
 export const getEvents = () => dispatch => {
-  // clean up any previous listeners
-  ipcRenderer.removeAllListeners('calendar:list-events-success');
-  ipcRenderer.removeAllListeners('calendar:list-events-failure');
-
-  // request events
-  ipcRenderer.send('calendar:list-events');
-  dispatch({
-    type: GET_EVENTS_REQUEST,
-    payload: null
-  });
-
-  ipcRenderer.on('calendar:list-events-success', (_item, items) => {
-  const processedEvents = processEvents(items);
-    dispatch({
-      type: GET_EVENTS,
-      payload: processedEvents
-    });
-  });
-
-  ipcRenderer.on('calendar:list-events-failure', (_event, error) => {
-    console.log(`error: ${error}`);
+  if (!window.calendarAPI) {
+    console.error('Calendar API not available');
     dispatch({
       type: FAILED_EVENT,
-      payload: error
+      payload: 'Calendar API not available'
     });
-  });
+    return;
+  }
+
+  try {
+    // request events
+    window.calendarAPI.listEvents();
+    dispatch({
+      type: GET_EVENTS_REQUEST,
+      payload: null
+    });
+
+    window.calendarAPI.onListEventsSuccess((_event, items) => {
+      const processedEvents = processEvents(items);
+      dispatch({
+        type: GET_EVENTS,
+        payload: processedEvents
+      });
+    });
+
+    window.calendarAPI.onListEventsFailure((_event, error) => {
+      console.error(`Calendar events error: ${error}`);
+      dispatch({
+        type: FAILED_EVENT,
+        payload: error
+      });
+    });
+  } catch (error) {
+    console.error('Error getting events:', error);
+    dispatch({
+      type: FAILED_EVENT,
+      payload: error.message
+    });
+  }
 };
 
 export const updateEvents = (events) => dispatch => {
@@ -42,33 +52,77 @@ export const updateEvents = (events) => dispatch => {
 };
 
 export const quickReservation = duration => dispatch => {
-  // clean up any previous listeners
-  ipcRenderer.removeAllListeners('calendar:quick-reservation-success');
-  ipcRenderer.removeAllListeners('calendar:quick-reservation-failure');
-
-  // reservation request
-  ipcRenderer.send('calendar:quick-reservation', duration);
-  ipcRenderer.on('calendar:quick-reservation-success', (event, events) => {
-    const processedEvents = processEvents(events);
+  if (!window.calendarAPI) {
+    console.error('Calendar API not available');
     dispatch({
-      type: GET_EVENTS,
-      payload: processedEvents
+      type: FAILED_EVENT,
+      payload: 'Calendar API not available'
     });
-  });
+    return;
+  }
+
+  try {
+    // reservation request
+    window.calendarAPI.quickReservation(duration);
+    
+    window.calendarAPI.onQuickReservationSuccess((_event, events) => {
+      const processedEvents = processEvents(events);
+      dispatch({
+        type: GET_EVENTS,
+        payload: processedEvents
+      });
+    });
+
+    window.calendarAPI.onQuickReservationFailure((_event, error) => {
+      console.error('Quick reservation error:', error);
+      dispatch({
+        type: FAILED_EVENT,
+        payload: error
+      });
+    });
+  } catch (error) {
+    console.error('Error creating reservation:', error);
+    dispatch({
+      type: FAILED_EVENT,
+      payload: error.message
+    });
+  }
 };
 
 export const finishReservation = eventId => dispatch => {
-  // clean up any previous listeners
-  ipcRenderer.removeAllListeners('calendar:finish-reservation-success');
-  ipcRenderer.removeAllListeners('calendar:finish-reservation-failure');
-
-  // event finish request
-  ipcRenderer.send('calendar:finish-reservation', eventId);
-  ipcRenderer.on('calendar:finish-reservation-success', (event, events) => {
-    const processedEvents = processEvents(events);
+  if (!window.calendarAPI) {
+    console.error('Calendar API not available');
     dispatch({
-      type: GET_EVENTS,
-      payload: processedEvents
+      type: FAILED_EVENT,
+      payload: 'Calendar API not available'
     });
-  });
+    return;
+  }
+
+  try {
+    // event finish request
+    window.calendarAPI.finishReservation(eventId);
+    
+    window.calendarAPI.onFinishReservationSuccess((_event, events) => {
+      const processedEvents = processEvents(events);
+      dispatch({
+        type: GET_EVENTS,
+        payload: processedEvents
+      });
+    });
+
+    window.calendarAPI.onFinishReservationFailure((_event, error) => {
+      console.error('Finish reservation error:', error);
+      dispatch({
+        type: FAILED_EVENT,
+        payload: error
+      });
+    });
+  } catch (error) {
+    console.error('Error finishing reservation:', error);
+    dispatch({
+      type: FAILED_EVENT,
+      payload: error.message
+    });
+  }
 };

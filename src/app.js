@@ -1,17 +1,19 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { webFrame } from 'electron';
 import { Link } from 'react-router-dom';
-import { ipcRenderer } from 'electron';
 import { getEvents } from './store/actions';
 import Status from './components/status';
 import Schedule from './components/schedule';
 import CheckConnection from './components/check_connection';
 import { STATUS_UPDATE_INTERVAL_MS } from './constants';
 
-// Disable pinch zooming
-webFrame.setVisualZoomLevelLimits(1, 1);
+// Disable pinch zooming (handled through CSS instead for security)
+document.addEventListener('wheel', (e) => {
+  if (e.ctrlKey) {
+    e.preventDefault();
+  }
+}, { passive: false });
 
 function currentHash() {
   return window.location.hash;
@@ -30,27 +32,33 @@ const isScheduleView = () => {
 };
 
 function App({getEvents, route}) {
-  let updateEventsInterval;
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     getEvents();
-    setUpdateDisplayedEventsInterval();
+    
+    // Set up interval
+    intervalRef.current = setInterval(() => {
+      getEvents();
+    }, STATUS_UPDATE_INTERVAL_MS);
 
     return () => {
-      ipcRenderer.removeAllListeners();
-      clearInterval(updateEventsInterval);
+      // Clean up interval
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+      
+      // Clean up calendar API listeners
+      if (window.calendarAPI) {
+        window.calendarAPI.removeAllListeners();
+      }
     };
-  }, [getEvents, updateEventsInterval]);
+  }, [getEvents]); // Only depend on getEvents, not the interval
 
   useEffect(() => {
     window.location.hash = route;
   }, [route]);
-
-  function setUpdateDisplayedEventsInterval() {
-    updateEventsInterval = setInterval(() => {
-      getEvents();
-    }, STATUS_UPDATE_INTERVAL_MS);
-  }
 
   return (
     <div id="app">

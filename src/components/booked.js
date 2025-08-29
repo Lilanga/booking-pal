@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash/lang';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from './button';
 import { humanReadableDuration, timeLeft } from './../util';
 
@@ -10,11 +10,27 @@ const bookedStatusSubMessage = (currentEvent) => {
 };
 
 const Booked = ({ currentEvent, onClick}) => {
+  const [calendarName, setCalendarName] = useState('');
   const remainingTimeMessage = isEmpty(currentEvent) ? null : bookedStatusSubMessage(currentEvent);
+
+  useEffect(() => {
+    const getCalendarName = async () => {
+      try {
+        if (window.appAPI) {
+          const name = await window.appAPI.getCalendarName();
+          setCalendarName(name);
+        }
+      } catch (error) {
+        console.error('Error getting calendar name:', error);
+      }
+    };
+
+    getCalendarName();
+  }, []);
 
   return (
     <div className='status-details' key={1}>
-      <strong> { remote.getGlobal('calendarName') }</strong>
+      <strong>{calendarName}</strong>
       <div className="action-buttons single">
         <Button icon="cancel" className="big" handleClick={onClick}/>
       </div>

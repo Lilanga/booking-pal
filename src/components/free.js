@@ -1,5 +1,5 @@
 import { isEmpty } from 'lodash/lang';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import Button from './button';
 import { humanReadableDuration, timeToEvent } from './../util';
@@ -19,11 +19,27 @@ const lessThan30MinutesToEvent = (event) => {
 };
 
 const Free = ({ nextEvent, onClick15, onClick30}) => {
+  const [calendarName, setCalendarName] = useState('');
   const remainingTimeMessage = isEmpty(nextEvent) ? null : freeStatusSubMessage(nextEvent);
+
+  useEffect(() => {
+    const getCalendarName = async () => {
+      try {
+        if (window.appAPI) {
+          const name = await window.appAPI.getCalendarName();
+          setCalendarName(name);
+        }
+      } catch (error) {
+        console.error('Error getting calendar name:', error);
+      }
+    };
+
+    getCalendarName();
+  }, []);
 
   return (
     <div className='status-details' key={1}>
-      <strong> { remote?.getGlobal('calendarName') }</strong>
+      <strong>{calendarName}</strong>
       <h3>Quick Booking</h3>
       <div className="action-buttons multiple">
         <Button

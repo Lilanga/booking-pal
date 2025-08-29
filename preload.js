@@ -4,3 +4,25 @@ contextBridge.exposeInMainWorld('electron', {
   askForCalendarId: () => ipcRenderer.invoke('ask-for-calendar-id'),
   sendCalendarId: (calendarId, title) => ipcRenderer.send('calendar-id', calendarId, title),
 });
+
+contextBridge.exposeInMainWorld('calendarAPI', {
+  listEvents: () => ipcRenderer.send('calendar:list-events'),
+  statusEvent: () => ipcRenderer.send('calendar:status-event'),
+  quickReservation: (duration) => ipcRenderer.send('calendar:quick-reservation', duration),
+  finishReservation: (eventId) => ipcRenderer.send('calendar:finish-reservation', eventId),
+  
+  onListEventsSuccess: (callback) => ipcRenderer.on('calendar:list-events-success', callback),
+  onListEventsFailure: (callback) => ipcRenderer.on('calendar:list-events-failure', callback),
+  onStatusEventSuccess: (callback) => ipcRenderer.on('calendar:status-event-success', callback),
+  onStatusEventFailure: (callback) => ipcRenderer.on('calendar:status-event-failure', callback),
+  onQuickReservationSuccess: (callback) => ipcRenderer.on('calendar:quick-reservation-success', callback),
+  onQuickReservationFailure: (callback) => ipcRenderer.on('calendar:quick-reservation-failure', callback),
+  onFinishReservationSuccess: (callback) => ipcRenderer.on('calendar:finish-reservation-success', callback),
+  onFinishReservationFailure: (callback) => ipcRenderer.on('calendar:finish-reservation-failure', callback),
+  
+  removeAllListeners: () => ipcRenderer.removeAllListeners(),
+});
+
+contextBridge.exposeInMainWorld('appAPI', {
+  getCalendarName: () => ipcRenderer.invoke('get-calendar-name'),
+});
