@@ -10,7 +10,7 @@
     "start-prod": "cross-env NODE_ENV=production npx electron .",
     "build-dev": "cross-env NODE_ENV=development npx webpack --mode development",
     "build": "cross-env NODE_ENV=production npx webpack --mode production --config webpack.prod.config.js",
-    "watch": "cross-env NODE_ENV=development npx webpack-dev-server --hot",
+    "watch": "cross-env NODE_ENV=development npx webpack-dev-server --config webpack.dev-server.config.js --hot",
     "pack": "npx electron-packager . BookingPal",
     "pack:win": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=win32 --arch=x64",
     "pack:mac": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=darwin --arch=x64",

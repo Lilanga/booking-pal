@@ -32,6 +32,13 @@ body {
   font-size: 16px;
   color: $black;
   background-color: $white;
+  
+  // Security: Prevent pinch zoom for kiosk mode
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 h1, h2, h3 {
   margin-top: 0;

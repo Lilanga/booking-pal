@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
@@ -8,7 +8,7 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
-    publicPath: './build/'
+    publicPath: 'http://localhost:8080/build/'
   },
 
   module: {
@@ -47,4 +47,13 @@ plugins: [
   target: 'electron-renderer',
 
   devtool: 'eval-source-map',
+
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'build'),
+    },
+    compress: true,
+    port: 8080,
+    hot: true
+  }
 };

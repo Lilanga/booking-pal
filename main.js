@@ -1,5 +1,4 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
-require('@electron/remote/main').initialize();
 
 const gcal = require('./src/gcal');
 const fs = require('fs');
@@ -8,24 +7,41 @@ const path = require('path');
 const CONFIG_DIR = path.resolve(__dirname, './config');
 const CALENDAR_CONFIG = path.resolve(CONFIG_DIR, 'calendar.json');
 
-global.calendarName = '';
+let calendarName = '';
 
 let win;
 
 function writeConfiguration(calendar_id, title) {
   return new Promise((resolve, reject) => {
+    if (!calendar_id || !title) {
+      const error = new Error('Calendar ID and title are required');
+      console.error('Configuration error:', error.message);
+      reject(error);
+      return;
+    }
+
     const configuration = { calendar_id: calendar_id, title: title };
 
-    fs.writeFile(CALENDAR_CONFIG, JSON.stringify(configuration), error => {
-      if (error){
-        console.error(error);
-        reject(error);
-      }
-      else
-        resolve(configuration);
-    });
+    try {
+      fs.writeFile(CALENDAR_CONFIG, JSON.stringify(configuration, null, 2), error => {
+        if (error) {
+          console.error('Failed to write configuration:', error);
+          reject(error);
+        } else {
+          console.log('Configuration saved successfully');
+          resolve(configuration);
+        }
+      });
+    } catch (error) {
+      console.error('Unexpected error writing configuration:', error);
+      reject(error);
+    }
   });
 }
+
+ipcMain.handle('get-calendar-name', () => {
+  return calendarName;
+});
 
 ipcMain.handle('ask-for-calendar-id', async () => {
 
@@ -37,8 +53,9 @@ ipcMain.handle('ask-for-calendar-id', async () => {
     width: 480,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
-      enableRemoteModule: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
       preload: path.join(__dirname, 'preload.js')
     }
   });
@@ -60,8 +77,9 @@ app.on('ready', () => {
     width: 480,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
-      enableRemoteModule: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
       preload: path.join(__dirname, 'preload.js')
     }
   });
@@ -73,11 +91,26 @@ app.on('ready', () => {
 
 function readConfigurationFile() {
   return new Promise((resolve, reject) => {
-    fs.readFile(CALENDAR_CONFIG, (error, content) => {
-      if (error)
+    fs.readFile(CALENDAR_CONFIG, 'utf8', (error, content) => {
+      if (error) {
+        console.error('Failed to read configuration file:', error.message);
         reject(error);
-      else
-        resolve(JSON.parse(content));
+        return;
+      }
+
+      try {
+        const config = JSON.parse(content);
+        if (!config.calendar_id || !config.title) {
+          const validationError = new Error('Invalid configuration: missing calendar_id or title');
+          console.error('Configuration validation error:', validationError.message);
+          reject(validationError);
+          return;
+        }
+        resolve(config);
+      } catch (parseError) {
+        console.error('Failed to parse configuration file:', parseError.message);
+        reject(new Error('Configuration file is corrupted'));
+      }
     });
   });
 }
@@ -109,9 +142,10 @@ function createWindow() {
     width: 480,
     height: 800,
     webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      enableRemoteModule: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      enableRemoteModule: false,
+      preload: path.join(__dirname, 'preload.js')
     }
   });
 
@@ -128,7 +162,6 @@ function createWindow() {
     win = null;
   });
 
-  require("@electron/remote/main").enable(win.webContents);
 }
 
 app.on('ready', () => {
@@ -142,7 +175,7 @@ app.on('ready', () => {
           // close the configuration window
           createWindow();
 
-          global.calendarName = configuration.title;
+          calendarName = configuration.title;
 
           ipcMain.on('calendar:list-events', event => client.listEvents()
             .then(items => { event.sender.send('calendar:list-events-success', items);})
