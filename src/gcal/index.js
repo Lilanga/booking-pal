@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { google } = require('googleapis');
 const Client = require('./client');
 const CONFIG_DIR = path.resolve(__dirname, '../../config');
@@ -35,9 +35,9 @@ function readCredentials() {
           return;
         }
 
-        // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(serviceKey.client_email)) {
+        // Validate email format using a ReDoS-safe regex
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        if (!serviceKey.client_email || typeof serviceKey.client_email !== 'string' || !emailRegex.test(serviceKey.client_email)) {
           const error = new Error('Invalid service account key: client_email format is invalid');
           console.error('Service key validation error:', error.message);
           reject(error);

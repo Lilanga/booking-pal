@@ -39,7 +39,7 @@ const Schedule = ({ events }) => {
     renderedEvents.push((
       <div className="flex-container schedule-event" key={events.length}>
         <span ref={timeLinePositionRef} />
-        <h3 className="schedule-event-name" />
+        <div className="schedule-event-name" aria-hidden="true" />
         {timeLine()}
       </div>
     ));

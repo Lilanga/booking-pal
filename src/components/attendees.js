@@ -5,14 +5,13 @@ const Attendees = ({ event }) => {
   const attendees = () => {
     if (!event.attendees) {
       return null;
-    } else {
-      return event.attendees.map((attendee) => {
-        if (attendee.resource) {
-          return null;
-        }
-        return <li key={attendee.displayName || attendee.email}>{attendee.displayName || attendee.email}</li>;
-      });
     }
+    return event.attendees.map((attendee) => {
+      if (attendee.resource) {
+        return null;
+      }
+      return <li key={attendee.displayName || attendee.email}>{attendee.displayName || attendee.email}</li>;
+    });
   };
 
   return (

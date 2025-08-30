@@ -12,18 +12,18 @@
           ...event,
           isAllDay: false,
         };
-      } else {  // all day events received from api call don't have the dateTime field
-        const start = new Date(event.start.date);
-        start.setHours(0);
-        const end = new Date(event.end.date);
-        end.setHours(0);
-        return {
-          ...event,
-          start: { ...event.start, dateTime: start },
-          end: { ...event.end, dateTime: end },
-          isAllDay: true,
-        };
       }
+      // all day events received from api call don't have the dateTime field
+      const start = new Date(event.start.date);
+      start.setHours(0);
+      const end = new Date(event.end.date);
+      end.setHours(0);
+      return {
+        ...event,
+        start: { ...event.start, dateTime: start },
+        end: { ...event.end, dateTime: end },
+        isAllDay: true,
+      };
     });
   };
 

@@ -1,8 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 
 const gcal = require('./src/gcal');
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const CONFIG_DIR = path.resolve(__dirname, './config');
 const CALENDAR_CONFIG = path.resolve(CONFIG_DIR, 'calendar.json');

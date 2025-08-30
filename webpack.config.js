@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require('node:path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {

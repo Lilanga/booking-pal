@@ -1,5 +1,5 @@
 const fs = require('fs-extra');
-const path = require('path');
+const path = require('node:path');
 
 const assetsSrcDir = path.join(__dirname, 'static', 'icons');
 const assetsDestDir = path.join(__dirname, 'build', 'icons');
