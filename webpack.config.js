@@ -1,5 +1,6 @@
 const path = require('node:path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const webpack = require('webpack');
 
 module.exports = {
   context: `${__dirname}/src`,
@@ -8,7 +9,8 @@ module.exports = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
-    publicPath: './build/'
+    publicPath: './build/',
+    globalObject: 'this'
   },
 
   module: {
@@ -37,14 +39,28 @@ module.exports = {
       }
     ]
   },
-plugins: [
+  
+  target: 'electron-renderer',
+
+  resolve: {
+    fallback: {
+      "global": false,
+      "process": false,
+      "Buffer": false
+    }
+  },
+
+
+  plugins: [
     new CopyWebpackPlugin({
       patterns: [
         { from: '../static/icons', to: 'icons' }
       ]
+    }),
+    new webpack.DefinePlugin({
+      global: 'globalThis',
     })
   ],
-  target: 'electron-renderer',
 
   devtool: 'eval-source-map',
 };

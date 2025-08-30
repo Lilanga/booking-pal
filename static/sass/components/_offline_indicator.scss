@@ -1,0 +1,256 @@
+// Offline Indicator Styles
+.offline-indicator {
+  position: fixed;
+  z-index: 9999;
+  max-width: 300px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+  
+  // Position variants
+  &--top-left {
+    top: 16px;
+    left: 16px;
+  }
+  
+  &--top-right {
+    top: 16px;
+    right: 16px;
+  }
+  
+  &--bottom-left {
+    bottom: 16px;
+    left: 16px;
+  }
+  
+  &--bottom-right {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  // Status indicator
+  &__status {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    user-select: none;
+    
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  &__icon {
+    margin-right: 6px;
+    font-size: 14px;
+  }
+
+  &__text {
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  // Status-specific styles
+  &--offline &__status {
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  &--syncing &__status {
+    background: rgba(59, 130, 246, 0.9);
+    color: white;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    
+    .offline-indicator__icon {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  &--queue &__status {
+    background: rgba(245, 158, 11, 0.9);
+    color: white;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  &--online &__status {
+    background: rgba(34, 197, 94, 0.9);
+    color: white;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+
+  // Details panel
+  &__details {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    min-width: 200px;
+    animation: slideDown 0.2s ease-out;
+    
+    // Adjust position for different placements
+    .offline-indicator--top-left &,
+    .offline-indicator--bottom-left & {
+      right: auto;
+      left: 0;
+    }
+    
+    .offline-indicator--bottom-left &,
+    .offline-indicator--bottom-right & {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: 8px;
+      animation: slideUp 0.2s ease-out;
+    }
+  }
+
+  &__detail-item {
+    margin-bottom: 8px;
+    color: #374151;
+    line-height: 1.4;
+    
+    &:last-child {
+      margin-bottom: 0;
+    }
+    
+    strong {
+      font-weight: 600;
+      color: #111827;
+    }
+  }
+
+  &__warning {
+    padding: 6px 8px;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 4px;
+    color: #92400e;
+    font-weight: 500;
+    margin-top: 8px;
+  }
+
+  &__sync-btn {
+    width: 100%;
+    padding: 6px 12px;
+    margin-top: 8px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    
+    &:hover {
+      background: #2563eb;
+    }
+    
+    &:active {
+      background: #1d4ed8;
+    }
+  }
+}
+
+// Animations
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .offline-indicator {
+    &--top-left,
+    &--top-right {
+      top: 8px;
+    }
+    
+    &--top-left,
+    &--bottom-left {
+      left: 8px;
+    }
+    
+    &--top-right,
+    &--bottom-right {
+      right: 8px;
+    }
+    
+    &--bottom-left,
+    &--bottom-right {
+      bottom: 8px;
+    }
+
+    &__status {
+      padding: 6px 10px;
+      font-size: 11px;
+    }
+
+    &__details {
+      min-width: 180px;
+      font-size: 11px;
+    }
+  }
+}
+
+// Dark theme support (if applicable)
+@media (prefers-color-scheme: dark) {
+  .offline-indicator {
+    &__details {
+      background: rgba(31, 41, 55, 0.95);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &__detail-item {
+      color: #d1d5db;
+      
+      strong {
+        color: #f3f4f6;
+      }
+    }
+
+    &__warning {
+      background: rgba(245, 158, 11, 0.2);
+      border-color: rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+  }
+}

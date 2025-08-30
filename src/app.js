@@ -5,8 +5,14 @@ import { Link, useLocation } from 'react-router-dom';
 import { getEvents } from './store/actions';
 import ErrorBoundary from './components/error_boundary';
 import withErrorBoundary from './components/with_error_boundary';
+import OfflineIndicator from './components/offline_indicator';
 import { STATUS_UPDATE_INTERVAL_MS } from './constants';
 import { getCalendarAPIManager } from './util/calendar_api_manager';
+
+// Import offline test utilities in development
+if (process.env.NODE_ENV === 'development') {
+  import('./util/offline-test-utils');
+}
 
 function App({getEvents, route, children}) {
   const location = useLocation();
@@ -96,6 +102,7 @@ function App({getEvents, route, children}) {
         <ErrorBoundary>
           {drawFooter()}
         </ErrorBoundary>
+        <OfflineIndicator position="top-right" showOnlineStatus={false} />
       </div>
     </ErrorBoundary>
   );

@@ -1,3 +1,11 @@
+// Polyfills for Electron renderer process
+if (typeof global === 'undefined') {
+  window.global = window;
+}
+if (typeof process === 'undefined') {
+  window.process = { env: { NODE_ENV: 'production' } };
+}
+
 import { Routes, Route, HashRouter } from 'react-router-dom';
 import React from 'react';
 import { Provider } from 'react-redux';
