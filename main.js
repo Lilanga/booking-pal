@@ -60,7 +60,7 @@ ipcMain.handle('ask-for-calendar-id', async () => {
     }
   });
 
-  configDialog.loadFile('input.html');
+  configDialog.loadFile('src/templates/calendar-config.html');
   if (process.env.NODE_ENV !== 'development')
     configDialog.setFullScreen(true);
 

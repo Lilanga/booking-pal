@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Calendar Configuration - Booking Pal</title>
+    <style>
+      /* Import project fonts */
+      @font-face {
+        font-family: 'Mark Pro';
+        src: url('../../static/fonts/MarkPro.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Mark Pro Medium';
+        src: url('../../static/fonts/MarkPro-Medium.otf') format('opentype');
+        font-weight: 500;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Mark Pro Light';
+        src: url('../../static/fonts/MarkPro-Light.otf') format('opentype');
+        font-weight: 300;
+        font-style: normal;
+      }
+
+      /* Base styles following project conventions */
+      * {
+        cursor: none;
+      }
+
+      body {
+        font-family: 'Mark Pro', sans-serif;
+        font-size: 16px;
+        color: #2E2E2E;
+        background-color: #FFF;
+        margin: 0;
+        padding: 0;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      #app {
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        box-sizing: border-box;
+      }
+
+      .config-container {
+        max-width: 400px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .logo-section {
+        margin-bottom: 3rem;
+      }
+
+      .logo-section h1 {
+        font-family: 'Mark Pro Medium', sans-serif;
+        font-size: 3rem;
+        margin: 0 0 1rem 0;
+        color: #17BFC5;
+      }
+
+      .logo-section p {
+        font-family: 'Mark Pro Light', sans-serif;
+        font-size: 1.2rem;
+        color: #2E2E2E;
+        margin: 0;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h2 {
+        font-family: 'Mark Pro Medium', sans-serif;
+        font-size: 1.5rem;
+        margin: 0 0 2rem 0;
+        color: #2E2E2E;
+      }
+
+      .input-group {
+        margin-bottom: 1.5rem;
+        text-align: left;
+      }
+
+      .input-group label {
+        display: block;
+        font-family: 'Mark Pro', sans-serif;
+        font-size: 1rem;
+        color: #2E2E2E;
+        margin-bottom: 0.5rem;
+      }
+
+      .input-group input[type="text"] {
+        width: 100%;
+        font-family: 'Mark Pro', sans-serif;
+        font-size: 1.1rem;
+        padding: 1rem;
+        border: 2px solid #E0E0E0;
+        border-radius: 8px;
+        background-color: #FFF;
+        color: #2E2E2E;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease;
+      }
+
+      .input-group input[type="text"]:focus {
+        outline: none;
+        border-color: #17BFC5;
+      }
+
+      .input-group input[type="text"]:invalid {
+        border-color: #F60755;
+      }
+
+      .submit-section {
+        margin-top: 2rem;
+      }
+
+      .submit-button {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #17BFC5, #17BFC5);
+        padding: 0;
+        box-shadow: 3px 4px 5px rgba(46, 46, 46, 0.4);
+        transition: all 0.2s ease-in;
+        cursor: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .submit-button:hover {
+        background: linear-gradient(135deg, #15A8AD, #15A8AD);
+        box-shadow: 4px 6px 8px rgba(46, 46, 46, 0.5);
+      }
+
+      .submit-button:focus {
+        outline: none;
+      }
+
+      .submit-button.clicked {
+        box-shadow: 0px 0px 30px 10px rgba(23, 191, 197, 0.4);
+        transition: box-shadow 0.4s ease-in;
+      }
+
+      .submit-button svg {
+        width: 40px;
+        height: 40px;
+        fill: white;
+      }
+
+      .help-text {
+        font-family: 'Mark Pro Light', sans-serif;
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.5rem;
+        text-align: left;
+      }
+
+      .error-message {
+        color: #F60755;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        text-align: center;
+        display: none;
+      }
+
+      /* Loading state */
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .loading .submit-button {
+        background: linear-gradient(135deg, #ccc, #ccc);
+      }
+
+      @media (max-width: 480px) {
+        #app {
+          padding: 1rem;
+        }
+        
+        .logo-section h1 {
+          font-size: 2.5rem;
+        }
+        
+        .submit-button {
+          width: 100px;
+          height: 100px;
+        }
+        
+        .submit-button svg {
+          width: 35px;
+          height: 35px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="config-container">
+        <div class="logo-section">
+          <h1>Booking Pal</h1>
+          <p>Room Calendar Configuration</p>
+        </div>
+
+        <div class="form-section">
+          <h2>Setup Your Display</h2>
+          <form id="calendar-form">
+            <div class="input-group">
+              <label for="title">Room Name</label>
+              <input
+                type="text"
+                id="title"
+                name="title"
+                placeholder="e.g., Conference Room A"
+                required
+                autocomplete="off"
+              />
+              <div class="help-text">This name will appear on the room display</div>
+            </div>
+
+            <div class="input-group">
+              <label for="calendar-id">Google Calendar ID</label>
+              <input
+                type="text"
+                id="calendar-id"
+                name="calendar-id"
+                placeholder="calendar@example.com"
+                required
+                autocomplete="off"
+              />
+              <div class="help-text">Find this in your Google Calendar settings under "Calendar ID"</div>
+            </div>
+
+            <div class="error-message" id="error-message">
+              Please fill in both fields to continue
+            </div>
+
+            <div class="submit-section">
+              <button type="submit" class="submit-button" id="submit-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('calendar-form');
+      const submitButton = document.getElementById('submit-btn');
+      const errorMessage = document.getElementById('error-message');
+      const app = document.getElementById('app');
+
+      // Validate inputs in real-time
+      const titleInput = document.getElementById('title');
+      const calendarIdInput = document.getElementById('calendar-id');
+
+      function validateInputs() {
+        const title = titleInput.value.trim();
+        const calendarId = calendarIdInput.value.trim();
+        
+        if (title && calendarId) {
+          errorMessage.style.display = 'none';
+          return true;
+        }
+        return false;
+      }
+
+      titleInput.addEventListener('input', validateInputs);
+      calendarIdInput.addEventListener('input', validateInputs);
+
+      form.addEventListener('submit', (event) => {
+        event.preventDefault();
+        
+        const title = titleInput.value.trim();
+        const calendarId = calendarIdInput.value.trim();
+        
+        if (!title || !calendarId) {
+          errorMessage.textContent = 'Please fill in both fields to continue';
+          errorMessage.style.display = 'block';
+          return;
+        }
+
+        // Email validation for calendar ID
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(calendarId)) {
+          errorMessage.textContent = 'Please enter a valid calendar ID (email format)';
+          errorMessage.style.display = 'block';
+          return;
+        }
+
+        // Show loading state
+        app.classList.add('loading');
+        submitButton.classList.add('clicked');
+        errorMessage.style.display = 'none';
+
+        // Send data to main process
+        try {
+          window.electron.sendCalendarId(calendarId, title);
+        } catch (error) {
+          console.error('Failed to send calendar configuration:', error);
+          app.classList.remove('loading');
+          submitButton.classList.remove('clicked');
+          errorMessage.textContent = 'Configuration failed. Please try again.';
+          errorMessage.style.display = 'block';
+        }
+      });
+
+      // Focus the first input on load
+      window.addEventListener('load', () => {
+        titleInput.focus();
+      });
+    </script>
+  </body>
+</html>
