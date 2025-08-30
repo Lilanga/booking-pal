@@ -1,33 +1,15 @@
 import React, { useEffect, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { getEvents } from './store/actions';
-import Status from './components/status';
-import Schedule from './components/schedule';
-import CheckConnection from './components/check_connection';
 import ErrorBoundary from './components/error_boundary';
 import withErrorBoundary from './components/with_error_boundary';
 import { STATUS_UPDATE_INTERVAL_MS } from './constants';
 import { getCalendarAPIManager } from './util/calendar_api_manager';
 
-function currentHash() {
-  return window.location.hash;
-}
-
-function isStatusView() {
-  return /status/.test(currentHash());
-}
-
-const isCheckConnectionView = () => {
-  return /check_connection/.test(currentHash());
-};
-
-const isScheduleView = () => {
-  return /schedule/.test(currentHash());
-};
-
-function App({getEvents, route}) {
+function App({getEvents, route, children}) {
+  const location = useLocation();
   const intervalRef = useRef(null);
   const wheelListenerRef = useRef(null);
   const isUnmountedRef = useRef(false);
@@ -87,12 +69,7 @@ function App({getEvents, route}) {
     };
   }, [stableGetEvents]);
 
-  // Handle route changes
-  useEffect(() => {
-    if (route && window.location.hash !== route) {
-      window.location.hash = route;
-    }
-  }, [route]);
+  // Handle route changes - removed as React Router handles this now
 
   return (
     <ErrorBoundary
@@ -114,7 +91,7 @@ function App({getEvents, route}) {
     >
       <div id="app">
         <ErrorBoundary>
-          {isStatusView() ? <Status /> : isScheduleView() ? <Schedule /> : <CheckConnection />}
+          {children}
         </ErrorBoundary>
         <ErrorBoundary>
           {drawFooter()}
@@ -124,10 +101,10 @@ function App({getEvents, route}) {
   );
 
   function drawFooter() {
-    if (isCheckConnectionView())
+    if (location.pathname === '/check_connection')
       return '';
 
-    const isStatus = isStatusView();
+    const isStatus = location.pathname === '/' || location.pathname === '/status';
     const footerText = isStatus ?
       <span>full schedule <i className="icon icon-arrow-right" /></span> :
       <span><i className="icon icon-arrow-left" /> back to booking</span>;
@@ -149,6 +126,7 @@ const mapStateToProps = state => ({
 App.propTypes = {
   getEvents: PropTypes.func.isRequired,
   route: PropTypes.string.isRequired,
+  children: PropTypes.node,
 };
 
 export default connect(mapStateToProps, {getEvents})(App);

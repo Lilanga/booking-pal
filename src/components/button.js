@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const Button = (props) => {
+  const { disabled = false, ...restProps } = props;
   const [clicked, setClicked] = useState(false);
   const clickedTimerRef = useRef(null);
   const isUnmountedRef = useRef(false);
@@ -27,14 +28,14 @@ const Button = (props) => {
     }, 1000);
 
     // Call the prop handler
-    if (props.handleClick && typeof props.handleClick === 'function') {
+    if (restProps.handleClick && typeof restProps.handleClick === 'function') {
       try {
-        props.handleClick(e);
+        restProps.handleClick(e);
       } catch (error) {
         console.error('Error in button click handler:', error);
       }
     }
-  }, [clicked, props.handleClick]);
+  }, [clicked, restProps.handleClick]);
 
   useEffect(() => {
     return () => {
@@ -46,11 +47,11 @@ const Button = (props) => {
     };
   }, []);
 
-  const iconClasses = classNames('icon', `icon-${props.icon}`);
+  const iconClasses = classNames('icon', `icon-${restProps.icon}`);
   const btnClasses = classNames({
     clicked: clicked,
-    disabled: props.disabled
-  }, props.className);
+    disabled: disabled
+  }, restProps.className);
 
   return (
     <button onClick={handleClick} className={btnClasses} disabled={clicked} type="button">
@@ -66,8 +67,5 @@ Button.propTypes = {
   className: PropTypes.string
 };
 
-Button.defaultProps = {
-  disabled: false
-};
 
 export default Button;

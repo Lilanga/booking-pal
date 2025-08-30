@@ -178,29 +178,59 @@ app.on('ready', () => {
           calendarName = configuration.title;
 
           ipcMain.on('calendar:list-events', event => client.listEvents()
-            .then(items => { event.sender.send('calendar:list-events-success', items);})
+            .then(items => { 
+              if (!event.sender.isDestroyed()) {
+                event.sender.send('calendar:list-events-success', items);
+              }
+            })
             .catch(error => {
               console.error(error);
-              event.sender.send('calendar:list-events-failure', error);
+              if (!event.sender.isDestroyed()) {
+                event.sender.send('calendar:list-events-failure', error);
+              }
             })
           );
 
           ipcMain.on('calendar:status-event', event => client.statusEvent()
-            .then(item => event.sender.send('calendar:status-event-success', item))
-            .catch(error => event.sender.send('calendar:status-event-failure', error))
+            .then(item => {
+              if (!event.sender.isDestroyed()) {
+                event.sender.send('calendar:status-event-success', item);
+              }
+            })
+            .catch(error => {
+              if (!event.sender.isDestroyed()) {
+                event.sender.send('calendar:status-event-failure', error);
+              }
+            })
           );
 
           ipcMain.on('calendar:quick-reservation', (event, duration) => {
             client.insertEvent(duration)
-              .then(response => { event.sender.send('calendar:quick-reservation-success', response);})
-              .catch(error => { event.sender.send('calendar:quick-reservation-failure', error);});
+              .then(response => { 
+                if (!event.sender.isDestroyed()) {
+                  event.sender.send('calendar:quick-reservation-success', response);
+                }
+              })
+              .catch(error => { 
+                if (!event.sender.isDestroyed()) {
+                  event.sender.send('calendar:quick-reservation-failure', error);
+                }
+              });
           }
           );
 
           ipcMain.on('calendar:finish-reservation', (event, eventId) => {
             client.finishEvent(eventId)
-              .then(response => event.sender.send('calendar:finish-reservation-success', response))
-              .catch(error => event.sender.send('calendar:finish-reservation-failure', error));
+              .then(response => {
+                if (!event.sender.isDestroyed()) {
+                  event.sender.send('calendar:finish-reservation-success', response);
+                }
+              })
+              .catch(error => {
+                if (!event.sender.isDestroyed()) {
+                  event.sender.send('calendar:finish-reservation-failure', error);
+                }
+              });
           });
         })
         .catch((error) => {console.log(`error: ${error}`); process.exit();});

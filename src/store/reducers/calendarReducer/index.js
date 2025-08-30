@@ -1,5 +1,5 @@
-const {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} = require('../../actions/types');
-const { nextEvent, currentEvent } = require('../../../util');
+import {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} from '../../actions/types';
+import { nextEvent, currentEvent } from '../../../util';
 const initialState = {
     events: [],
     error: null,

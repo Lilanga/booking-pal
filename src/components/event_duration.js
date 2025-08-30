@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import moment from 'moment';
-import { isEmpty } from 'lodash/lang';
+import { isEmpty } from 'lodash';
 import { isAllDayEvent } from '../util';
 
 const EventDuration = ({event}) => {

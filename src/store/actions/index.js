@@ -1,5 +1,5 @@
-const {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} = require('./types');
-const {processEvents} = require('../../gcal/eventHelpers');
+import {GET_EVENTS, GET_EVENTS_REQUEST, FAILED_EVENT} from './types';
+import {processEvents} from '../../gcal/eventHelpers';
 import { getCalendarAPIManager } from '../../util/calendar_api_manager';
 
 export const getEvents = () => dispatch => {

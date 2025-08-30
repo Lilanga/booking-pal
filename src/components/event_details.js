@@ -6,11 +6,11 @@ import Button from './button';
 import Empty from './empty';
 import Attendees from './attendees';
 import classNames from 'classnames';
-import { isEmpty } from 'lodash/lang';
+import { isEmpty } from 'lodash';
 import EventDuration from './event_duration';
 
  const EventDetails = (props) => {
-  const { currentEvent, isCurrent, expanded, handleExpandDetails } = props;
+  const { currentEvent, isCurrent, expanded = false, handleExpandDetails } = props;
 
   const btnClasses = classNames({
     small: true,
@@ -51,9 +51,6 @@ EventDetails.propTypes = {
   handleExpandDetails: PropTypes.func.isRequired,
 };
 
-EventDetails.defaultProps = {
-  expanded: false,
-};
 
 const mapStateToProps = state => ({
   currentEvent: state.calendar.currentEvent,

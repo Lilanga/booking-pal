@@ -7,10 +7,15 @@ import { CSSTransition } from 'react-transition-group';
 import { quickReservation, finishReservation } from '../store/actions';
 import Free from './free';
 import Booked from './booked';
-import { isEmpty } from 'lodash/lang';
+import { isEmpty } from 'lodash';
 
 
-const Status = ({ currentEvent, nextEvent, onQuickReservation, onFinishReservation }) => {
+const Status = ({ 
+  currentEvent = {}, 
+  nextEvent = {}, 
+  onQuickReservation = () => {}, 
+  onFinishReservation = () => {} 
+}) => {
 
   const [detailsExpanded, setDetailsExpanded] = useState(false);
 
@@ -74,14 +79,6 @@ Status.propTypes = {
   onFinishReservation: PropTypes.func,
 };
 
-Status.defaultProps = {
-  events: [],
-  currentEvent: {},
-  nextEvent: {},
-  nextEventIdx: -1,
-  onQuickReservation: () => { },
-  onFinishReservation: () => { },
-};
 
 const mapStateToProps = state => ({
   currentEvent: state.calendar.currentEvent,
