@@ -4,6 +4,8 @@
  * for offline functionality
  */
 
+import { generateSecureId } from '../util/secure-random.mjs';
+
 // Check if localStorage is available
 const hasLocalStorage = (() => {
   try {
@@ -141,7 +143,7 @@ class OfflineStorageService {
     try {
       const queue = this.getOfflineQueue();
       const queueItem = {
-        id: `offline_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        id: `offline_${Date.now()}_${generateSecureId(9)}`,
         action: action,
         timestamp: Date.now(),
         attempts: 0

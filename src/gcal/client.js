@@ -13,10 +13,12 @@ const MAX_RETRY_DELAY = 10000; // 10 seconds
 let lastRequestTime = 0;
 const MIN_REQUEST_INTERVAL = 100; // Minimum 100ms between requests
 
+const { generateSecureRandom } = require('../util/secure-random');
+
 // Exponential backoff with jitter
 function calculateRetryDelay(attempt) {
   const exponentialDelay = Math.min(BASE_RETRY_DELAY * 2 ** attempt, MAX_RETRY_DELAY);
-  const jitter = Math.random() * 0.1 * exponentialDelay;
+  const jitter = generateSecureRandom() * 0.1 * exponentialDelay;
   return exponentialDelay + jitter;
 }
 

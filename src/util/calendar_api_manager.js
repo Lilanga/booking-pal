@@ -2,6 +2,8 @@
  * Calendar API Manager - Manages calendar API listeners to prevent memory leaks
  */
 
+import { generateSecureId } from './secure-random.mjs';
+
 class CalendarAPIManager {
   constructor() {
     this.listeners = new Map();
@@ -26,7 +28,7 @@ class CalendarAPIManager {
       return null;
     }
 
-    const listenerId = id || `${eventType}_${Date.now()}_${Math.random()}`;
+    const listenerId = id || `${eventType}_${Date.now()}_${generateSecureId()}`;
     const methodName = this.getMethodName(eventType);
 
     if (!methodName || typeof window.calendarAPI[methodName] !== 'function') {
