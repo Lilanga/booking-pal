@@ -46,7 +46,7 @@ ipcMain.handle('get-calendar-name', () => {
 ipcMain.handle('ask-for-calendar-id', async () => {
 
   // if win is not empty and is visible, hide it
-  if (win && win.isVisible())
+  if (win?.isVisible())
     win.hide();
 
   const configDialog = new BrowserWindow({

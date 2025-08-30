@@ -1,27 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
 const Button = (props) => {
-
   const [clicked, setClicked] = useState(false);
-  let clickedTimer;
+  const clickedTimerRef = useRef(null);
+  const isUnmountedRef = useRef(false);
 
-  function handleClick(e) {
+  const handleClick = useCallback((e) => {
+    if (isUnmountedRef.current || clicked) {
+      return;
+    }
+
     setClicked(true);
-    clickedTimer = setTimeout(
-      () => setClicked(false),
-      1000
-    );
+    
+    // Clear any existing timer
+    if (clickedTimerRef.current) {
+      clearTimeout(clickedTimerRef.current);
+    }
 
-    props.handleClick(e);
-  }
+    clickedTimerRef.current = setTimeout(() => {
+      if (!isUnmountedRef.current) {
+        setClicked(false);
+      }
+      clickedTimerRef.current = null;
+    }, 1000);
+
+    // Call the prop handler
+    if (props.handleClick && typeof props.handleClick === 'function') {
+      try {
+        props.handleClick(e);
+      } catch (error) {
+        console.error('Error in button click handler:', error);
+      }
+    }
+  }, [clicked, props.handleClick]);
 
   useEffect(() => {
     return () => {
-      clearTimeout(clickedTimer);
+      isUnmountedRef.current = true;
+      if (clickedTimerRef.current) {
+        clearTimeout(clickedTimerRef.current);
+        clickedTimerRef.current = null;
+      }
     };
-  }, [clickedTimer]);
+  }, []);
 
   const iconClasses = classNames('icon', `icon-${props.icon}`);
   const btnClasses = classNames({

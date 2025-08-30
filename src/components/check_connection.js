@@ -1,21 +1,34 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import withErrorBoundary from './with_error_boundary';
 
 const CheckConnection = () => {
   const [calendarName, setCalendarName] = useState('');
+  const isUnmountedRef = useRef(false);
 
   useEffect(() => {
     const getCalendarName = async () => {
       try {
-        if (window.appAPI) {
+        if (isUnmountedRef.current) return;
+        
+        if (window.appAPI && typeof window.appAPI.getCalendarName === 'function') {
           const name = await window.appAPI.getCalendarName();
-          setCalendarName(name);
+          if (!isUnmountedRef.current && name) {
+            setCalendarName(name);
+          }
         }
       } catch (error) {
         console.error('Error getting calendar name:', error);
+        if (!isUnmountedRef.current) {
+          setCalendarName('Calendar');
+        }
       }
     };
 
     getCalendarName();
+
+    return () => {
+      isUnmountedRef.current = true;
+    };
   }, []);
 
   return (
@@ -27,4 +40,4 @@ const CheckConnection = () => {
   );
 };
 
-export default CheckConnection;
+export default withErrorBoundary(CheckConnection);
