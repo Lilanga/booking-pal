@@ -10,8 +10,12 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'build'),
     publicPath: './build/',
-    globalObject: 'this'
+    globalObject: 'this',
+    clean: true
   },
+
+  // Enable tree shaking
+  mode: 'development',
 
   module: {
     rules: [
@@ -20,7 +24,14 @@ module.exports = {
         loader: 'babel-loader',
         exclude: /node_modules/,
         options: {
-          presets: ['@babel/preset-env', '@babel/preset-react']
+          presets: [
+            ['@babel/preset-env', {
+              modules: false, // Preserve ES6 modules for tree shaking
+              useBuiltIns: 'usage',
+              corejs: 3
+            }], 
+            '@babel/preset-react'
+          ]
         }
       },
       {
@@ -47,7 +58,14 @@ module.exports = {
       "global": false,
       "process": false,
       "Buffer": false
-    }
+    },
+    // Improve module resolution for tree shaking
+    mainFields: ['es2015', 'module', 'main']
+  },
+
+  optimization: {
+    usedExports: true, // Mark unused exports for tree shaking
+    sideEffects: false, // Enable aggressive tree shaking
   },
 
 
@@ -58,6 +76,9 @@ module.exports = {
       ]
     }),
     new webpack.DefinePlugin({
+      global: 'globalThis',
+    }),
+    new webpack.ProvidePlugin({
       global: 'globalThis',
     })
   ],

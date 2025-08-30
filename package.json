@@ -3,6 +3,11 @@
   "version": "0.1.0",
   "description": "Meeting room display for BookingPal",
   "main": "main.js",
+  "sideEffects": [
+    "*.scss",
+    "*.css",
+    "./src/entry.js"
+  ],
   "scripts": {
     "lint": "npx @biomejs/biome lint .",
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,6 +15,7 @@
     "start-prod": "cross-env NODE_ENV=production npx electron .",
     "build-dev": "cross-env NODE_ENV=development npx webpack --mode development",
     "build": "cross-env NODE_ENV=production npx webpack --mode production --config webpack.prod.config.js",
+    "test-prod": "npm run build && cross-env NODE_ENV=production npx electron .",
     "watch": "cross-env NODE_ENV=development npx webpack-dev-server --config webpack.dev-server.config.js --hot",
     "pack": "npx electron-packager . BookingPal",
     "pack:win": "npm run build && npm run copy-assets && npx electron-packager . BookingPal --platform=win32 --arch=x64",
@@ -39,9 +45,11 @@
     "@electron/packager": "^18.3.6",
     "babel-loader": "^9.2.1",
     "copy-webpack-plugin": "^12.0.2",
+    "core-js": "^3.45.1",
     "cross-env": "^7.0.3",
     "css-loader": "^7.1.2",
     "electron": "^33.2.1",
+    "html-webpack-plugin": "^5.6.4",
     "webpack": "^5.97.1",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.2.2"
