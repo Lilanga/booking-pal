@@ -110,14 +110,14 @@ const OfflineIndicator = ({ position = 'top-right', showOnlineStatus = false }) 
 
   return (
     <div className={indicatorClasses}>
-      <div 
+      <button 
         className="offline-indicator__status"
         onClick={() => setShowDetails(!showDetails)}
         title={`Click for details. Last sync: ${getTimeSince(status.lastSync)}`}
       >
         <span className="offline-indicator__icon">{getStatusIcon()}</span>
         <span className="offline-indicator__text">{getStatusText()}</span>
-      </div>
+      </button>
       
       {showDetails && (
         <div className="offline-indicator__details">
