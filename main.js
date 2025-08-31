@@ -1,82 +1,44 @@
 const { app, BrowserWindow, ipcMain } = require('electron');
 
 const gcal = require('./src/gcal');
-const fs = require('node:fs');
 const path = require('node:path');
 const ConfigServer = require('./src/config-server');
-
-const CONFIG_DIR = path.resolve(__dirname, './config');
-const CALENDAR_CONFIG = path.resolve(CONFIG_DIR, 'calendar.json');
-const SERVICE_KEY_CONFIG = path.resolve(CONFIG_DIR, 'service_key.json');
+const ConfigStore = require('./src/config-store');
 
 let calendarName = '';
 let win;
 let configServer = null;
+let configStore = new ConfigStore();
 
 function writeConfiguration(calendar_id, title) {
-  return new Promise((resolve, reject) => {
-    if (!calendar_id || !title) {
-      const error = new Error('Calendar ID and title are required');
-      console.error('Configuration error:', error.message);
-      reject(error);
-      return;
-    }
-
-    const configuration = { calendar_id: calendar_id, title: title };
-
+  return new Promise(async (resolve, reject) => {
     try {
-      fs.writeFile(CALENDAR_CONFIG, JSON.stringify(configuration, null, 2), error => {
-        if (error) {
-          console.error('Failed to write configuration:', error);
-          reject(error);
-        } else {
-          console.log('Configuration saved successfully');
-          resolve(configuration);
-        }
-      });
+      const configuration = await configStore.setCalendarConfig(calendar_id, title);
+      console.log('Configuration saved successfully');
+      resolve(configuration);
     } catch (error) {
-      console.error('Unexpected error writing configuration:', error);
+      console.error('Configuration error:', error.message);
       reject(error);
     }
   });
 }
 
 function writeServiceKey(serviceKey) {
-  return new Promise((resolve, reject) => {
-    if (!serviceKey) {
-      const error = new Error('Service key is required');
-      console.error('Service key error:', error.message);
-      reject(error);
-      return;
-    }
-
+  return new Promise(async (resolve, reject) => {
     try {
-      // Ensure config directory exists
-      if (!fs.existsSync(CONFIG_DIR)) {
-        fs.mkdirSync(CONFIG_DIR, { recursive: true });
-      }
-
-      fs.writeFile(SERVICE_KEY_CONFIG, JSON.stringify(serviceKey, null, 2), error => {
-        if (error) {
-          console.error('Failed to write service key:', error);
-          reject(error);
-        } else {
-          console.log('Service key saved successfully');
-          resolve(serviceKey);
-        }
-      });
+      const savedKey = await configStore.setServiceKey(serviceKey);
+      console.log('Service key saved successfully');
+      resolve(savedKey);
     } catch (error) {
-      console.error('Unexpected error writing service key:', error);
+      console.error('Service key error:', error.message);
       reject(error);
     }
   });
 }
 
 function checkServiceKeyExists() {
-  return new Promise((resolve) => {
-    fs.access(SERVICE_KEY_CONFIG, fs.constants.F_OK, (error) => {
-      resolve(!error); // true if file exists, false if not
-    });
+  return new Promise(async (resolve) => {
+    resolve(await configStore.hasServiceKey());
   });
 }
 
@@ -142,12 +104,12 @@ ipcMain.handle('save-configuration', async (event, configData) => {
       if (!testResult.valid) {
         return { success: false, error: testResult.error };
       }
-      await writeServiceKey(serviceKey);
+      await configStore.setServiceKey(serviceKey);
     }
     
     // Save calendar configuration if both room name and calendar ID are provided
     if (roomName && calendarId) {
-      await writeConfiguration(calendarId, roomName);
+      await configStore.setCalendarConfig(calendarId, roomName);
     }
     
     return { success: true, message: 'Configuration saved successfully' };
@@ -167,11 +129,11 @@ ipcMain.handle('start-config-server', async () => {
       configServer.setServiceKeyCallback(async (data) => {
         try {
           // Save the service key
-          await writeServiceKey(data.serviceKey);
+          await configStore.setServiceKey(data.serviceKey);
           
           // If room name and calendar ID are provided, save calendar config too
           if (data.roomName && data.calendarId) {
-            await writeConfiguration(data.calendarId, data.roomName);
+            await configStore.setCalendarConfig(data.calendarId, data.roomName);
           }
           
           console.log('Configuration received via web server');
@@ -207,31 +169,7 @@ ipcMain.handle('stop-config-server', async () => {
 
 ipcMain.handle('get-current-config', async () => {
   try {
-    const config = {};
-    
-    // Read service key
-    try {
-      const serviceKeyContent = await new Promise((resolve, reject) => {
-        fs.readFile(SERVICE_KEY_CONFIG, 'utf8', (err, content) => {
-          if (err) reject(err);
-          else resolve(content);
-        });
-      });
-      config.serviceKey = JSON.parse(serviceKeyContent);
-    } catch (error) {
-      console.log('Could not read service key:', error.message);
-    }
-    
-    // Read calendar config
-    try {
-      const calendarConfig = await readConfigurationFile();
-      config.roomName = calendarConfig.title;
-      config.calendarId = calendarConfig.calendar_id;
-    } catch (error) {
-      console.log('Could not read calendar configuration:', error.message);
-    }
-    
-    return config;
+    return await configStore.getCurrentConfig();
   } catch (error) {
     console.error('Failed to get current configuration:', error);
     return {};
@@ -243,20 +181,14 @@ ipcMain.handle('reconfigure', async () => {
     console.log('Starting reconfiguration flow...');
     
     // Get current configuration
-    let currentConfig = null;
-    try {
-      const calendarConfig = await readConfigurationFile();
-      currentConfig = {
-        roomName: calendarConfig.title,
-        calendarId: calendarConfig.calendar_id
-      };
-    } catch (error) {
-      console.log('Could not read current calendar configuration');
-    }
+    const currentConfig = await configStore.getCurrentConfig();
 
     // Set current config in web server if it exists
-    if (configServer && currentConfig) {
-      configServer.setCurrentConfig(currentConfig);
+    if (configServer && (currentConfig.roomName || currentConfig.calendarId)) {
+      configServer.setCurrentConfig({
+        roomName: currentConfig.roomName,
+        calendarId: currentConfig.calendarId
+      });
     }
     
     // Show the service key configuration dialog (now with dismiss option)
@@ -331,28 +263,23 @@ app.on('ready', () => {
 });
 
 function readConfigurationFile() {
-  return new Promise((resolve, reject) => {
-    fs.readFile(CALENDAR_CONFIG, 'utf8', (error, content) => {
-      if (error) {
-        console.error('Failed to read configuration file:', error.message);
-        reject(error);
+  return new Promise(async (resolve, reject) => {
+    try {
+      const calendar = await configStore.getCalendarConfig();
+      if (!calendar || !calendar.id || !calendar.title) {
+        const validationError = new Error('Invalid configuration: missing calendar_id or title');
+        console.error('Configuration validation error:', validationError.message);
+        reject(validationError);
         return;
       }
-
-      try {
-        const config = JSON.parse(content);
-        if (!config.calendar_id || !config.title) {
-          const validationError = new Error('Invalid configuration: missing calendar_id or title');
-          console.error('Configuration validation error:', validationError.message);
-          reject(validationError);
-          return;
-        }
-        resolve(config);
-      } catch (parseError) {
-        console.error('Failed to parse configuration file:', parseError.message);
-        reject(new Error('Configuration file is corrupted'));
-      }
-    });
+      resolve({
+        calendar_id: calendar.id,
+        title: calendar.title
+      });
+    } catch (error) {
+      console.error('Failed to read configuration:', error.message);
+      reject(error);
+    }
   });
 }
 
@@ -362,11 +289,14 @@ function readConfiguration() {
       .then(configuration => resolve(configuration))
       .catch(async error => {
         console.error(error);
-        if (error.code !== 'ENOENT')
+        // Check if calendar config exists in store
+        if (await configStore.hasCalendarConfig()) {
+          // Configuration exists but may be incomplete, reject the error
           reject(error);
-        else {
-            const {calendarId, title} = await win.webContents.executeJavaScript('window.electron.askForCalendarId()');
-            writeConfiguration(calendarId, title)
+        } else {
+          // No calendar configuration exists, prompt user
+          const {calendarId, title} = await win.webContents.executeJavaScript('window.electron.askForCalendarId()');
+          writeConfiguration(calendarId, title)
             .then(configuration => resolve(configuration))
             .catch(error => reject(error));
         }
@@ -447,8 +377,13 @@ async function initializeApp() {
     // Step 2: Read calendar configuration (will prompt if not found)
     const configuration = await readConfiguration();
 
-    // Step 3: Initialize Google Calendar API
-    const gcalApi = new gcal.GCal(configuration.calendar_id);
+    // Step 3: Get service key and initialize Google Calendar API
+    const serviceKey = await configStore.getServiceKey();
+    if (!serviceKey) {
+      throw new Error('Service key not found in configuration store');
+    }
+    
+    const gcalApi = new gcal.GCal(configuration.calendar_id, serviceKey);
     const client = await gcalApi.authorize();
 
     // Step 4: Create main window and set up event handlers

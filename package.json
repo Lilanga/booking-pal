@@ -57,6 +57,7 @@
   "dependencies": {
     "classnames": "^2.5.1",
     "cors": "^2.8.5",
+    "electron-store": "^10.1.0",
     "express": "^5.1.0",
     "google-auth-library": "^9.15.0",
     "googleapis": "^148.0.0",

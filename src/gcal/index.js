@@ -1,60 +1,52 @@
-const fs = require('node:fs');
-const path = require('node:path');
 const { google } = require('googleapis');
 const Client = require('./client');
-const CONFIG_DIR = path.resolve(__dirname, '../../config');
-const GOOGLE_CLIENT_SECRET = path.resolve(CONFIG_DIR, 'service_key.json');
 
-function readCredentials() {
+function validateServiceKey(serviceKey) {
   return new Promise((resolve, reject) => {
-    fs.readFile(GOOGLE_CLIENT_SECRET, 'utf8', (err, content) => {
-      if (err) {
-        console.error('Failed to read service account key:', err.message);
-        reject(new Error(`Cannot read credentials file: ${err.message}`));
+    try {
+      if (!serviceKey) {
+        reject(new Error('Service key is required'));
+        return;
+      }
+        
+      // Validate required service account fields
+      const requiredFields = ['type', 'client_email', 'private_key', 'project_id'];
+      const missingFields = requiredFields.filter(field => !serviceKey[field]);
+      
+      if (missingFields.length > 0) {
+        const error = new Error(`Invalid service account key. Missing fields: ${missingFields.join(', ')}`);
+        console.error('Service key validation error:', error.message);
+        reject(error);
         return;
       }
 
-      try {
-        const serviceKey = JSON.parse(content);
-        
-        // Validate required service account fields
-        const requiredFields = ['type', 'client_email', 'private_key', 'project_id'];
-        const missingFields = requiredFields.filter(field => !serviceKey[field]);
-        
-        if (missingFields.length > 0) {
-          const error = new Error(`Invalid service account key. Missing fields: ${missingFields.join(', ')}`);
-          console.error('Service key validation error:', error.message);
-          reject(error);
-          return;
-        }
-
-        if (serviceKey.type !== 'service_account') {
-          const error = new Error('Invalid service account key: type must be "service_account"');
-          console.error('Service key validation error:', error.message);
-          reject(error);
-          return;
-        }
-
-        // Validate email format using a ReDoS-safe regex
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        if (!serviceKey.client_email || typeof serviceKey.client_email !== 'string' || !emailRegex.test(serviceKey.client_email)) {
-          const error = new Error('Invalid service account key: client_email format is invalid');
-          console.error('Service key validation error:', error.message);
-          reject(error);
-          return;
-        }
-
-        console.log('Service account credentials validated successfully');
-        resolve(serviceKey);
-      } catch (parseError) {
-        console.error('Failed to parse service account key:', parseError.message);
-        reject(new Error('Service account key file is corrupted or invalid JSON'));
+      if (serviceKey.type !== 'service_account') {
+        const error = new Error('Invalid service account key: type must be "service_account"');
+        console.error('Service key validation error:', error.message);
+        reject(error);
+        return;
       }
-    });
+
+      // Validate email format using a ReDoS-safe regex
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!serviceKey.client_email || typeof serviceKey.client_email !== 'string' || !emailRegex.test(serviceKey.client_email)) {
+        const error = new Error('Invalid service account key: client_email format is invalid');
+        console.error('Service key validation error:', error.message);
+        reject(error);
+        return;
+      }
+
+      console.log('Service account credentials validated successfully');
+      resolve(serviceKey);
+    } catch (error) {
+      console.error('Failed to validate service account key:', error.message);
+      reject(new Error('Service account key validation failed'));
+    }
   });
 }
 
 let _calendarId;
+let _serviceKey;
 // Test service key by attempting to authenticate
 async function testServiceKey(serviceKey) {
   try {
@@ -99,13 +91,14 @@ async function testServiceKey(serviceKey) {
 exports.testServiceKey = testServiceKey;
 
 exports.GCal = class GCal {
-  constructor(calendarId) {
+  constructor(calendarId, serviceKey) {
     _calendarId = calendarId;
+    _serviceKey = serviceKey;
   }
 
   async authorize() {
     try {
-      const serviceAccountKey = await readCredentials();
+      const serviceAccountKey = await validateServiceKey(_serviceKey);
 
       if (!_calendarId) {
         throw new Error('Calendar ID is not set');
