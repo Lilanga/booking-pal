@@ -66,6 +66,8 @@ jobs:
         run: npm ci
 
       - name: Build and package for Windows
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           npm run dist:win
@@ -94,6 +96,8 @@ jobs:
         run: npm ci
 
       - name: Build and package for macOS
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           npm run dist:mac
@@ -122,6 +126,8 @@ jobs:
         run: npm ci
 
       - name: Build and package for Linux
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           npm run dist:linux
@@ -151,6 +157,8 @@ jobs:
         run: npm ci
 
       - name: Build and package for Raspberry Pi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           npm run build
           npm run dist:pi
