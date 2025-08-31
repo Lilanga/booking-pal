@@ -76,8 +76,8 @@ prodConfig.plugins = [
 prodConfig.output = {
   ...prodConfig.output, // Preserve existing output settings (including globalObject)
   filename: '[name].[contenthash].js',
-  path: `${__dirname}/build`,
-  publicPath: './build/',
+  path: `${__dirname}/dist`,
+  publicPath: './dist/',
   clean: true
 };
 
