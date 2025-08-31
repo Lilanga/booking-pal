@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Google Service Account Setup - Booking Pal</title>
+    <style>
+      /* Import project fonts */
+      @font-face {
+        font-family: 'Mark Pro';
+        src: url('../../static/fonts/MarkPro.otf') format('opentype');
+        font-weight: normal;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Mark Pro Medium';
+        src: url('../../static/fonts/MarkPro-Medium.otf') format('opentype');
+        font-weight: 500;
+        font-style: normal;
+      }
+      @font-face {
+        font-family: 'Mark Pro Light';
+        src: url('../../static/fonts/MarkPro-Light.otf') format('opentype');
+        font-weight: 300;
+        font-style: normal;
+      }
+
+      /* Base styles following project conventions */
+      * {
+        cursor: none;
+      }
+
+      body {
+        font-family: 'Mark Pro', sans-serif;
+        font-size: 16px;
+        color: #2E2E2E;
+        background-color: #FFF;
+        margin: 0;
+        padding: 0;
+        touch-action: manipulation;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+      }
+
+      #app {
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 2rem;
+        box-sizing: border-box;
+      }
+
+      .config-container {
+        max-width: 500px;
+        width: 100%;
+        text-align: center;
+      }
+
+      .logo-section {
+        margin-bottom: 2rem;
+      }
+
+      .logo-section h1 {
+        font-family: 'Mark Pro Medium', sans-serif;
+        font-size: 2.5rem;
+        margin: 0 0 0.5rem 0;
+        color: #17BFC5;
+      }
+
+      .logo-section p {
+        font-family: 'Mark Pro Light', sans-serif;
+        font-size: 1.1rem;
+        color: #2E2E2E;
+        margin: 0;
+      }
+
+      .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+
+      .step {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #E0E0E0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .step.active {
+        background-color: #17BFC5;
+        color: white;
+      }
+
+      .step.completed {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+        text-align: left;
+      }
+
+      .form-section h2 {
+        font-family: 'Mark Pro Medium', sans-serif;
+        font-size: 1.3rem;
+        margin: 0 0 1rem 0;
+        color: #2E2E2E;
+        text-align: center;
+      }
+
+      .instructions {
+        background-color: #F8F9FA;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        text-align: left;
+      }
+
+      .instructions h3 {
+        font-family: 'Mark Pro Medium', sans-serif;
+        font-size: 1.1rem;
+        margin: 0 0 1rem 0;
+        color: #2E2E2E;
+      }
+
+      .instructions ol {
+        margin: 0;
+        padding-left: 1.5rem;
+      }
+
+      .instructions li {
+        margin-bottom: 0.5rem;
+        line-height: 1.4;
+      }
+
+      .instructions a {
+        color: #17BFC5;
+        text-decoration: underline;
+      }
+
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group label {
+        display: block;
+        font-family: 'Mark Pro', sans-serif;
+        font-size: 1rem;
+        color: #2E2E2E;
+        margin-bottom: 0.5rem;
+      }
+
+      .input-group textarea {
+        width: 100%;
+        min-height: 200px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        padding: 1rem;
+        border: 2px solid #E0E0E0;
+        border-radius: 8px;
+        background-color: #FFF;
+        color: #2E2E2E;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease;
+        resize: vertical;
+      }
+
+      .input-group textarea:focus {
+        outline: none;
+        border-color: #17BFC5;
+      }
+
+      .input-group textarea:invalid {
+        border-color: #F60755;
+      }
+
+      .input-group textarea.valid {
+        border-color: #4CAF50;
+      }
+
+      .url-section {
+        background-color: #F0F8FF;
+        border: 2px solid #17BFC5;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+
+      .url-section h3 {
+        color: #17BFC5;
+        margin-bottom: 1rem;
+        font-size: 1.3rem;
+      }
+
+      .url-display {
+        background: white;
+        border: 1px solid #E0E0E0;
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin: 1rem 0;
+      }
+
+      .url-header {
+        font-size: 0.9rem;
+        color: #666;
+        margin-bottom: 0.5rem;
+      }
+
+      .url-text {
+        font-family: 'Courier New', monospace;
+        font-size: 1.1rem;
+        color: #17BFC5;
+        font-weight: bold;
+        background: #F8F9FA;
+        padding: 0.75rem;
+        border-radius: 6px;
+        border: 1px solid #E0E0E0;
+        margin: 0.5rem 0;
+        word-break: break-all;
+      }
+
+      .url-help {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+      }
+
+      .qr-section {
+        margin: 1.5rem 0;
+      }
+
+      .qr-section canvas {
+        border: 4px solid white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .submit-section {
+        margin-top: 2rem;
+        text-align: center;
+      }
+
+      .submit-button {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        border: none;
+        background: linear-gradient(135deg, #17BFC5, #17BFC5);
+        padding: 0;
+        box-shadow: 3px 4px 5px rgba(46, 46, 46, 0.4);
+        transition: all 0.2s ease-in;
+        cursor: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+      }
+
+      .submit-button:hover {
+        background: linear-gradient(135deg, #15A8AD, #15A8AD);
+        box-shadow: 4px 6px 8px rgba(46, 46, 46, 0.5);
+      }
+
+      .submit-button:focus {
+        outline: none;
+      }
+
+      .submit-button:disabled {
+        background: linear-gradient(135deg, #ccc, #ccc);
+        cursor: none;
+        opacity: 0.6;
+      }
+
+      .submit-button.clicked {
+        box-shadow: 0px 0px 30px 10px rgba(23, 191, 197, 0.4);
+        transition: box-shadow 0.4s ease-in;
+      }
+
+      .submit-button svg {
+        width: 40px;
+        height: 40px;
+        fill: white;
+      }
+
+      .help-text {
+        font-family: 'Mark Pro Light', sans-serif;
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+      }
+
+      .error-message, .success-message {
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        text-align: center;
+        display: none;
+      }
+
+      .error-message {
+        background-color: #FFEBEE;
+        color: #F60755;
+        border: 1px solid #FFCDD2;
+      }
+
+      .success-message {
+        background-color: #E8F5E8;
+        color: #4CAF50;
+        border: 1px solid #C8E6C9;
+      }
+
+      .validation-status {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        text-align: center;
+        display: none;
+      }
+
+      .validation-status.validating {
+        background-color: #FFF3E0;
+        color: #FF9800;
+        border: 1px solid #FFCC02;
+        display: block;
+      }
+
+      .validation-status.valid {
+        background-color: #E8F5E8;
+        color: #4CAF50;
+        border: 1px solid #C8E6C9;
+        display: block;
+      }
+
+      .validation-status.invalid {
+        background-color: #FFEBEE;
+        color: #F60755;
+        border: 1px solid #FFCDD2;
+        display: block;
+      }
+
+      .key-preview {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #F8F9FA;
+        border-radius: 6px;
+        border: 1px solid #E0E0E0;
+        display: none;
+      }
+
+      .key-preview h4 {
+        margin: 0 0 0.5rem 0;
+        font-family: 'Mark Pro Medium', sans-serif;
+        font-size: 0.95rem;
+      }
+
+      .key-preview .key-info {
+        font-size: 0.85rem;
+        color: #666;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.5rem 1rem;
+      }
+
+      .key-info .label {
+        font-weight: bold;
+        color: #2E2E2E;
+      }
+
+      /* Loading state */
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+
+      .loading .submit-button {
+        background: linear-gradient(135deg, #ccc, #ccc);
+      }
+
+      @media (max-width: 480px) {
+        #app {
+          padding: 1rem;
+        }
+        
+        .logo-section h1 {
+          font-size: 2rem;
+        }
+        
+        .submit-button {
+          width: 100px;
+          height: 100px;
+        }
+        
+        .submit-button svg {
+          width: 35px;
+          height: 35px;
+        }
+
+        .instructions {
+          padding: 1rem;
+        }
+
+        .input-group textarea {
+          min-height: 150px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <div class="config-container">
+        <div class="logo-section">
+          <h1>Booking Pal</h1>
+          <p>Google Service Account Setup</p>
+        </div>
+
+        <div class="step-indicator">
+          <div class="step active" id="step-1">1</div>
+          <div class="step" id="step-2">2</div>
+        </div>
+
+        <div class="form-section">
+          <div class="instructions">
+            <h3>Setup Instructions</h3>
+            <ol>
+              <li>Go to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
+              <li>Create a new project or select existing one</li>
+              <li>Enable the <a href="https://console.cloud.google.com/apis/library/calendar-json.googleapis.com" target="_blank">Google Calendar API</a></li>
+              <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Credentials</a> page</li>
+              <li>Create a new Service Account</li>
+              <li>Download the service account key in JSON format</li>
+              <li>Share your calendar with the service account email address</li>
+            </ol>
+          </div>
+
+          <form id="service-key-form">
+            <div class="url-section">
+              <h3>Remote Configuration Available</h3>
+              <p style="margin: 0 0 1rem 0; color: #666; font-size: 1rem; line-height: 1.4;">
+                For easier configuration on touch screens, you can use your phone or computer to configure this device remotely.
+              </p>
+              
+              <div class="url-display" id="url-display">
+                <div class="url-header">
+                  <strong>Configuration URL:</strong>
+                </div>
+                <div class="url-text" id="config-url">
+                  Starting configuration server...
+                </div>
+                <div class="url-help">
+                  Open this URL on your phone or computer to configure the service account
+                </div>
+              </div>
+
+              <div class="qr-section" id="qr-section" style="text-align: center; margin: 1rem 0;">
+                <p style="margin-bottom: 0.5rem; font-weight: 500;">Or scan this QR code:</p>
+                <div id="qr-code"></div>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <label for="service-key">Or paste the JSON content directly:</label>
+              <textarea
+                id="service-key"
+                name="service-key"
+                placeholder='Paste your service account JSON here...
+
+Example:
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "your-service-account@your-project.iam.gserviceaccount.com",
+  "client_id": "...",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  ...
+}'
+              ></textarea>
+              <div class="help-text">
+                The JSON file should contain your Google Cloud service account credentials including private_key, client_email, and project_id.
+              </div>
+            </div>
+
+            <div class="validation-status" id="validation-status">
+              Validating service account key...
+            </div>
+
+            <div class="key-preview" id="key-preview">
+              <h4>Service Account Preview</h4>
+              <div class="key-info" id="key-info">
+                <!-- Preview will be populated here -->
+              </div>
+            </div>
+
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+
+            <div class="submit-section">
+              <button type="submit" class="submit-button" id="submit-btn" disabled>
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                </svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('service-key-form');
+      const textarea = document.getElementById('service-key');
+      const submitButton = document.getElementById('submit-btn');
+      const errorMessage = document.getElementById('error-message');
+      const successMessage = document.getElementById('success-message');
+      const validationStatus = document.getElementById('validation-status');
+      const keyPreview = document.getElementById('key-preview');
+      const keyInfo = document.getElementById('key-info');
+      const app = document.getElementById('app');
+      const step1 = document.getElementById('step-1');
+      const step2 = document.getElementById('step-2');
+      const configUrl = document.getElementById('config-url');
+      const qrCode = document.getElementById('qr-code');
+
+      let currentServiceKey = null;
+      let validationTimeout = null;
+
+      // Request configuration URL from main process
+      async function initializeConfigServer() {
+        try {
+          const result = await window.electron.startConfigServer();
+          if (result && result.url) {
+            configUrl.textContent = result.url;
+            generateQRCode(result.url);
+          } else {
+            configUrl.textContent = 'Configuration server failed to start';
+          }
+        } catch (error) {
+          console.error('Failed to start config server:', error);
+          configUrl.textContent = 'Configuration server failed to start';
+        }
+      }
+
+      // Simple QR Code generation using a free service
+      function generateQRCode(url) {
+        const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(url)}`;
+        const img = document.createElement('img');
+        img.src = qrUrl;
+        img.alt = 'QR Code for configuration URL';
+        img.style.maxWidth = '200px';
+        img.style.height = 'auto';
+        img.style.border = '4px solid white';
+        img.style.borderRadius = '8px';
+        img.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        
+        qrCode.innerHTML = '';
+        qrCode.appendChild(img);
+      }
+
+      // Real-time validation
+      textarea.addEventListener('input', (e) => {
+        const content = e.target.value.trim();
+        if (content) {
+          // Debounce validation
+          clearTimeout(validationTimeout);
+          validationTimeout = setTimeout(() => {
+            validateServiceKey(content);
+          }, 500);
+        } else {
+          resetValidation();
+        }
+      });
+
+      function validateServiceKey(jsonContent) {
+        hideMessages();
+        showValidationStatus('validating', 'Validating service account key...');
+
+        try {
+          const serviceKey = JSON.parse(jsonContent);
+          
+          // Validate required fields
+          const requiredFields = ['type', 'client_email', 'private_key', 'project_id'];
+          const missingFields = requiredFields.filter(field => !serviceKey[field]);
+          
+          if (missingFields.length > 0) {
+            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+          }
+
+          if (serviceKey.type !== 'service_account') {
+            throw new Error('Invalid type: must be "service_account"');
+          }
+
+          // Validate email format
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+          if (!emailRegex.test(serviceKey.client_email)) {
+            throw new Error('Invalid client_email format');
+          }
+
+          // Validate private key format
+          if (!serviceKey.private_key.includes('BEGIN PRIVATE KEY') || 
+              !serviceKey.private_key.includes('END PRIVATE KEY')) {
+            throw new Error('Invalid private key format');
+          }
+
+          // If we get here, the key is valid
+          currentServiceKey = serviceKey;
+          showValidationStatus('valid', 'Service account key is valid!');
+          showKeyPreview(serviceKey);
+          enableSubmit();
+          textarea.classList.add('valid');
+          step1.classList.add('completed');
+          step1.classList.remove('active');
+          step2.classList.add('active');
+
+        } catch (error) {
+          showValidationStatus('invalid', `Invalid service key: ${error.message}`);
+          currentServiceKey = null;
+          hideKeyPreview();
+          disableSubmit();
+          textarea.classList.remove('valid');
+          step1.classList.remove('completed');
+          step1.classList.add('active');
+          step2.classList.remove('active');
+        }
+      }
+
+      function showKeyPreview(serviceKey) {
+        keyInfo.innerHTML = `
+          <span class="label">Project ID:</span>
+          <span>${serviceKey.project_id}</span>
+          <span class="label">Client Email:</span>
+          <span>${serviceKey.client_email}</span>
+          <span class="label">Type:</span>
+          <span>${serviceKey.type}</span>
+        `;
+        keyPreview.style.display = 'block';
+      }
+
+      function hideKeyPreview() {
+        keyPreview.style.display = 'none';
+      }
+
+      function showValidationStatus(type, message) {
+        validationStatus.className = `validation-status ${type}`;
+        validationStatus.textContent = message;
+      }
+
+      function resetValidation() {
+        validationStatus.style.display = 'none';
+        hideKeyPreview();
+        disableSubmit();
+        textarea.classList.remove('valid');
+        step1.classList.remove('completed');
+        step1.classList.add('active');
+        step2.classList.remove('active');
+      }
+
+      function enableSubmit() {
+        submitButton.disabled = false;
+      }
+
+      function disableSubmit() {
+        submitButton.disabled = true;
+      }
+
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+      }
+
+      function showSuccess(message) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+      }
+
+      function hideMessages() {
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
+      }
+
+      // Form submission
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        if (!currentServiceKey) {
+          showError('Please provide a valid service account key');
+          return;
+        }
+
+        // Show loading state
+        app.classList.add('loading');
+        submitButton.classList.add('clicked');
+        hideMessages();
+        showValidationStatus('validating', 'Testing Google Calendar connection...');
+
+        try {
+          // Send the service key to main process for validation and saving
+          const result = await window.electron.sendServiceKey(currentServiceKey);
+          
+          if (result.success) {
+            showSuccess('Service account key saved successfully! Starting application...');
+            step2.classList.add('completed');
+            
+            // Wait a moment to show success, then close window
+            setTimeout(() => {
+              window.close();
+            }, 1500);
+          } else {
+            throw new Error(result.error || 'Failed to save service key');
+          }
+
+        } catch (error) {
+          console.error('Service key configuration error:', error);
+          app.classList.remove('loading');
+          submitButton.classList.remove('clicked');
+          showValidationStatus('invalid', 'Connection test failed');
+          showError(`Configuration failed: ${error.message}`);
+        }
+      });
+
+      // Initialize on load
+      window.addEventListener('load', () => {
+        initializeConfigServer();
+        textarea.focus();
+      });
+    </script>
+  </body>
+</html>

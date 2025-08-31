@@ -3,6 +3,10 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electron', {
   askForCalendarId: () => ipcRenderer.invoke('ask-for-calendar-id'),
   sendCalendarId: (calendarId, title) => ipcRenderer.send('calendar-id', calendarId, title),
+  askForServiceKey: () => ipcRenderer.invoke('ask-for-service-key'),
+  sendServiceKey: (serviceKey) => ipcRenderer.invoke('save-service-key', serviceKey),
+  startConfigServer: () => ipcRenderer.invoke('start-config-server'),
+  stopConfigServer: () => ipcRenderer.invoke('stop-config-server'),
 });
 
 contextBridge.exposeInMainWorld('calendarAPI', {

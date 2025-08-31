@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Booking Pal - Remote Configuration</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #17BFC5 0%, #15A8AD 100%);
+        min-height: 100vh;
+        padding: 1rem;
+        color: #2E2E2E;
+      }
+
+      .container {
+        max-width: 600px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: #17BFC5;
+        color: white;
+        padding: 2rem;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+      }
+
+      .header p {
+        opacity: 0.9;
+        font-size: 1.1rem;
+      }
+
+      .device-info {
+        background: rgba(255, 255, 255, 0.1);
+        margin: 1rem -2rem 0;
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+      }
+
+      .content {
+        padding: 2rem;
+      }
+
+      .step-indicator {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 2rem;
+      }
+
+      .step {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #E0E0E0;
+        color: #666;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        margin: 0 0.5rem;
+        transition: all 0.3s ease;
+      }
+
+      .step.active {
+        background-color: #17BFC5;
+        color: white;
+      }
+
+      .step.completed {
+        background-color: #4CAF50;
+        color: white;
+      }
+
+      .form-section {
+        margin-bottom: 2rem;
+      }
+
+      .form-section h2 {
+        font-size: 1.3rem;
+        margin-bottom: 1rem;
+        color: #2E2E2E;
+      }
+
+      .instructions {
+        background-color: #F8F9FA;
+        border: 1px solid #E0E0E0;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+      }
+
+      .instructions h3 {
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+        color: #2E2E2E;
+      }
+
+      .instructions ol {
+        padding-left: 1.5rem;
+      }
+
+      .instructions li {
+        margin-bottom: 0.5rem;
+        line-height: 1.5;
+      }
+
+      .instructions a {
+        color: #17BFC5;
+        text-decoration: none;
+        font-weight: 500;
+      }
+
+      .instructions a:hover {
+        text-decoration: underline;
+      }
+
+      .input-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .input-group label {
+        display: block;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        color: #2E2E2E;
+      }
+
+      .input-group input,
+      .input-group textarea {
+        width: 100%;
+        padding: 1rem;
+        border: 2px solid #E0E0E0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .input-group input:focus,
+      .input-group textarea:focus {
+        outline: none;
+        border-color: #17BFC5;
+        box-shadow: 0 0 0 3px rgba(23, 191, 197, 0.1);
+      }
+
+      .input-group textarea {
+        min-height: 200px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        resize: vertical;
+      }
+
+      .input-group textarea.valid {
+        border-color: #4CAF50;
+      }
+
+      .input-group textarea.invalid {
+        border-color: #F60755;
+      }
+
+      .help-text {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.5rem;
+        line-height: 1.4;
+      }
+
+      .validation-status {
+        margin-top: 1rem;
+        padding: 0.75rem;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        display: none;
+      }
+
+      .validation-status.validating {
+        background-color: #FFF3E0;
+        color: #FF9800;
+        border: 1px solid #FFCC02;
+        display: block;
+      }
+
+      .validation-status.valid {
+        background-color: #E8F5E8;
+        color: #4CAF50;
+        border: 1px solid #C8E6C9;
+        display: block;
+      }
+
+      .validation-status.invalid {
+        background-color: #FFEBEE;
+        color: #F60755;
+        border: 1px solid #FFCDD2;
+        display: block;
+      }
+
+      .key-preview {
+        margin-top: 1rem;
+        padding: 1rem;
+        background-color: #F8F9FA;
+        border-radius: 8px;
+        border: 1px solid #E0E0E0;
+        display: none;
+      }
+
+      .key-preview h4 {
+        margin-bottom: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .key-preview .key-info {
+        font-size: 0.85rem;
+        color: #666;
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 0.5rem 1rem;
+      }
+
+      .key-info .label {
+        font-weight: 500;
+        color: #2E2E2E;
+      }
+
+      .submit-button {
+        width: 100%;
+        padding: 1rem;
+        background: #17BFC5;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1.1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 1rem;
+      }
+
+      .submit-button:hover:not(:disabled) {
+        background: #15A8AD;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(23, 191, 197, 0.3);
+      }
+
+      .submit-button:disabled {
+        background: #ccc;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+
+      .submit-button.loading {
+        background: #17BFC5;
+        cursor: wait;
+      }
+
+      .error-message, .success-message {
+        padding: 1rem;
+        border-radius: 8px;
+        margin: 1rem 0;
+        display: none;
+      }
+
+      .error-message {
+        background-color: #FFEBEE;
+        color: #F60755;
+        border: 1px solid #FFCDD2;
+      }
+
+      .success-message {
+        background-color: #E8F5E8;
+        color: #4CAF50;
+        border: 1px solid #C8E6C9;
+      }
+
+      .loading-spinner {
+        display: none;
+        width: 20px;
+        height: 20px;
+        margin-right: 0.5rem;
+        border: 2px solid transparent;
+        border-top: 2px solid currentColor;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+
+      .submit-button.loading .loading-spinner {
+        display: inline-block;
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 0.5rem;
+        }
+        
+        .header {
+          padding: 1.5rem;
+        }
+        
+        .header h1 {
+          font-size: 1.5rem;
+        }
+        
+        .content {
+          padding: 1.5rem;
+        }
+        
+        .instructions {
+          padding: 1rem;
+        }
+
+        .step {
+          width: 35px;
+          height: 35px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Booking Pal Setup</h1>
+        <p>Configure your Google Calendar service account</p>
+        <div class="device-info" id="device-info">
+          Connecting to device...
+        </div>
+      </div>
+
+      <div class="content">
+        <div class="step-indicator">
+          <div class="step active" id="step-1">1</div>
+          <div class="step" id="step-2">2</div>
+          <div class="step" id="step-3">3</div>
+        </div>
+
+        <div class="form-section">
+          <div class="instructions">
+            <h3>Google Service Account Setup</h3>
+            <ol>
+              <li>Go to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a></li>
+              <li>Create a new project or select existing one</li>
+              <li>Enable the <a href="https://console.cloud.google.com/apis/library/calendar-json.googleapis.com" target="_blank">Google Calendar API</a></li>
+              <li>Go to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">Credentials</a> page</li>
+              <li>Create a new Service Account</li>
+              <li>Download the service account key in JSON format</li>
+              <li>Copy the JSON content and paste it below</li>
+              <li>Share your calendar with the service account email address</li>
+            </ol>
+          </div>
+
+          <form id="config-form">
+            <div class="input-group">
+              <label for="service-key">Service Account JSON:</label>
+              <textarea
+                id="service-key"
+                name="service-key"
+                placeholder='Paste your service account JSON here...
+
+Example:
+{
+  "type": "service_account",
+  "project_id": "your-project-id",
+  "private_key_id": "...",
+  "private_key": "-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n",
+  "client_email": "your-service-account@your-project.iam.gserviceaccount.com",
+  "client_id": "...",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  ...
+}'
+                required
+              ></textarea>
+              <div class="help-text">
+                The JSON file should contain your Google Cloud service account credentials including private_key, client_email, and project_id.
+              </div>
+            </div>
+
+            <div class="validation-status" id="validation-status">
+              Validating service account key...
+            </div>
+
+            <div class="key-preview" id="key-preview">
+              <h4>Service Account Preview</h4>
+              <div class="key-info" id="key-info">
+                <!-- Preview will be populated here -->
+              </div>
+            </div>
+
+            <div class="input-group" style="display: none;" id="room-config">
+              <label for="room-name">Room Name (Optional):</label>
+              <input
+                type="text"
+                id="room-name"
+                name="room-name"
+                placeholder="e.g., Conference Room A"
+              />
+              <div class="help-text">
+                If provided, this will also configure the room name for the display.
+              </div>
+
+              <label for="calendar-id" style="margin-top: 1rem;">Google Calendar ID (Optional):</label>
+              <input
+                type="text"
+                id="calendar-id"
+                name="calendar-id"
+                placeholder="calendar@example.com"
+              />
+              <div class="help-text">
+                If provided, this will also configure the calendar ID. You can set this up later if preferred.
+              </div>
+            </div>
+
+            <div class="error-message" id="error-message"></div>
+            <div class="success-message" id="success-message"></div>
+
+            <button type="submit" class="submit-button" id="submit-btn" disabled>
+              <span class="loading-spinner"></span>
+              Configure Service Account
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const form = document.getElementById('config-form');
+      const textarea = document.getElementById('service-key');
+      const roomNameInput = document.getElementById('room-name');
+      const calendarIdInput = document.getElementById('calendar-id');
+      const submitButton = document.getElementById('submit-btn');
+      const errorMessage = document.getElementById('error-message');
+      const successMessage = document.getElementById('success-message');
+      const validationStatus = document.getElementById('validation-status');
+      const keyPreview = document.getElementById('key-preview');
+      const keyInfo = document.getElementById('key-info');
+      const deviceInfo = document.getElementById('device-info');
+      const roomConfig = document.getElementById('room-config');
+      const step1 = document.getElementById('step-1');
+      const step2 = document.getElementById('step-2');
+      const step3 = document.getElementById('step-3');
+
+      let currentServiceKey = null;
+      let validationTimeout = null;
+
+      // Load device info
+      async function loadDeviceInfo() {
+        try {
+          const response = await fetch('/api/device-info');
+          const info = await response.json();
+          
+          let deviceText = `Device: ${info.hostname}`;
+          if (info.networkInterfaces && info.networkInterfaces.length > 0) {
+            deviceText += ` (${info.networkInterfaces[0].address})`;
+          }
+          
+          deviceInfo.textContent = deviceText;
+        } catch (error) {
+          deviceInfo.textContent = 'Connected to Booking Pal device';
+        }
+      }
+
+      // Real-time validation
+      textarea.addEventListener('input', (e) => {
+        const content = e.target.value.trim();
+        if (content) {
+          // Debounce validation
+          clearTimeout(validationTimeout);
+          validationTimeout = setTimeout(() => {
+            validateServiceKey(content);
+          }, 500);
+        } else {
+          resetValidation();
+        }
+      });
+
+      function validateServiceKey(jsonContent) {
+        hideMessages();
+        showValidationStatus('validating', 'Validating service account key...');
+
+        try {
+          const serviceKey = JSON.parse(jsonContent);
+          
+          // Validate required fields
+          const requiredFields = ['type', 'client_email', 'private_key', 'project_id'];
+          const missingFields = requiredFields.filter(field => !serviceKey[field]);
+          
+          if (missingFields.length > 0) {
+            throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+          }
+
+          if (serviceKey.type !== 'service_account') {
+            throw new Error('Invalid type: must be "service_account"');
+          }
+
+          // Validate email format
+          const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+          if (!emailRegex.test(serviceKey.client_email)) {
+            throw new Error('Invalid client_email format');
+          }
+
+          // Validate private key format
+          if (!serviceKey.private_key.includes('BEGIN PRIVATE KEY') || 
+              !serviceKey.private_key.includes('END PRIVATE KEY')) {
+            throw new Error('Invalid private key format');
+          }
+
+          // If we get here, the key is valid
+          currentServiceKey = serviceKey;
+          showValidationStatus('valid', 'Service account key format is valid!');
+          showKeyPreview(serviceKey);
+          enableSubmit();
+          textarea.classList.add('valid');
+          step1.classList.add('completed');
+          step1.classList.remove('active');
+          step2.classList.add('active');
+          roomConfig.style.display = 'block';
+
+        } catch (error) {
+          showValidationStatus('invalid', `Invalid service key: ${error.message}`);
+          currentServiceKey = null;
+          hideKeyPreview();
+          disableSubmit();
+          textarea.classList.remove('valid');
+          textarea.classList.add('invalid');
+          step1.classList.remove('completed');
+          step1.classList.add('active');
+          step2.classList.remove('active');
+          roomConfig.style.display = 'none';
+        }
+      }
+
+      function showKeyPreview(serviceKey) {
+        keyInfo.innerHTML = `
+          <span class="label">Project ID:</span>
+          <span>${serviceKey.project_id}</span>
+          <span class="label">Client Email:</span>
+          <span>${serviceKey.client_email}</span>
+          <span class="label">Type:</span>
+          <span>${serviceKey.type}</span>
+        `;
+        keyPreview.style.display = 'block';
+      }
+
+      function hideKeyPreview() {
+        keyPreview.style.display = 'none';
+      }
+
+      function showValidationStatus(type, message) {
+        validationStatus.className = `validation-status ${type}`;
+        validationStatus.textContent = message;
+      }
+
+      function resetValidation() {
+        validationStatus.style.display = 'none';
+        hideKeyPreview();
+        disableSubmit();
+        textarea.classList.remove('valid', 'invalid');
+        step1.classList.remove('completed');
+        step1.classList.add('active');
+        step2.classList.remove('active');
+        roomConfig.style.display = 'none';
+      }
+
+      function enableSubmit() {
+        submitButton.disabled = false;
+      }
+
+      function disableSubmit() {
+        submitButton.disabled = true;
+      }
+
+      function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+        successMessage.style.display = 'none';
+      }
+
+      function showSuccess(message) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+        errorMessage.style.display = 'none';
+      }
+
+      function hideMessages() {
+        errorMessage.style.display = 'none';
+        successMessage.style.display = 'none';
+      }
+
+      // Form submission
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        
+        if (!currentServiceKey) {
+          showError('Please provide a valid service account key');
+          return;
+        }
+
+        // Show loading state
+        submitButton.classList.add('loading');
+        submitButton.disabled = true;
+        submitButton.textContent = '';
+        submitButton.innerHTML = '<span class="loading-spinner"></span> Configuring...';
+        hideMessages();
+        showValidationStatus('validating', 'Testing Google Calendar connection...');
+        step2.classList.add('completed');
+        step2.classList.remove('active');
+        step3.classList.add('active');
+
+        try {
+          const payload = {
+            serviceKey: currentServiceKey,
+            roomName: roomNameInput.value.trim() || null,
+            calendarId: calendarIdInput.value.trim() || null
+          };
+
+          const response = await fetch('/api/service-key', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+          
+          if (result.success) {
+            showSuccess(result.message);
+            step3.classList.add('completed');
+            submitButton.textContent = '✓ Configuration Complete';
+            validationStatus.style.display = 'none';
+            
+            // Show completion message
+            setTimeout(() => {
+              showSuccess('Configuration saved successfully! You can now close this page. The display should start automatically.');
+            }, 1000);
+            
+          } else {
+            throw new Error(result.error || 'Configuration failed');
+          }
+
+        } catch (error) {
+          console.error('Configuration error:', error);
+          submitButton.classList.remove('loading');
+          submitButton.disabled = false;
+          submitButton.textContent = 'Configure Service Account';
+          showValidationStatus('invalid', 'Connection test failed');
+          showError(`Configuration failed: ${error.message}`);
+          step3.classList.remove('active');
+          step2.classList.add('active');
+          step2.classList.remove('completed');
+        }
+      });
+
+      // Initialize
+      loadDeviceInfo();
+    </script>
+  </body>
+</html>

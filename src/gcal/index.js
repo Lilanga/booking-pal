@@ -55,6 +55,49 @@ function readCredentials() {
 }
 
 let _calendarId;
+// Test service key by attempting to authenticate
+async function testServiceKey(serviceKey) {
+  try {
+    // Validate required fields first
+    const requiredFields = ['type', 'client_email', 'private_key', 'project_id'];
+    const missingFields = requiredFields.filter(field => !serviceKey[field]);
+    
+    if (missingFields.length > 0) {
+      throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
+    }
+
+    if (serviceKey.type !== 'service_account') {
+      throw new Error('Invalid service account key: type must be "service_account"');
+    }
+
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!serviceKey.client_email || !emailRegex.test(serviceKey.client_email)) {
+      throw new Error('Invalid service account key: client_email format is invalid');
+    }
+
+    // Test actual authentication with Google
+    const jwtClient = new google.auth.JWT(
+      serviceKey.client_email,
+      undefined,
+      serviceKey.private_key,
+      ['https://www.googleapis.com/auth/calendar'],
+    );
+
+    // Attempt to get an access token to verify the key works
+    await jwtClient.authorize();
+    
+    console.log('Service account key validation successful');
+    return { valid: true, message: 'Service account key is valid and can authenticate with Google Calendar API' };
+    
+  } catch (error) {
+    console.error('Service key validation failed:', error.message);
+    return { valid: false, error: error.message };
+  }
+}
+
+exports.testServiceKey = testServiceKey;
+
 exports.GCal = class GCal {
   constructor(calendarId) {
     _calendarId = calendarId;
