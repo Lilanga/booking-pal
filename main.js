@@ -132,6 +132,32 @@ ipcMain.handle('save-service-key', async (event, serviceKey) => {
   }
 });
 
+ipcMain.handle('save-configuration', async (event, configData) => {
+  try {
+    const { serviceKey, roomName, calendarId } = configData;
+    
+    // Validate and save service key if provided
+    if (serviceKey) {
+      const testResult = await gcal.testServiceKey(serviceKey);
+      if (!testResult.valid) {
+        return { success: false, error: testResult.error };
+      }
+      await writeServiceKey(serviceKey);
+    }
+    
+    // Save calendar configuration if both room name and calendar ID are provided
+    if (roomName && calendarId) {
+      await writeConfiguration(calendarId, roomName);
+    }
+    
+    return { success: true, message: 'Configuration saved successfully' };
+    
+  } catch (error) {
+    console.error('Failed to save configuration:', error);
+    return { success: false, error: error.message };
+  }
+});
+
 ipcMain.handle('start-config-server', async () => {
   try {
     if (!configServer) {
@@ -175,6 +201,85 @@ ipcMain.handle('stop-config-server', async () => {
     return { success: true };
   } catch (error) {
     console.error('Failed to stop configuration server:', error);
+    return { success: false, error: error.message };
+  }
+});
+
+ipcMain.handle('get-current-config', async () => {
+  try {
+    const config = {};
+    
+    // Read service key
+    try {
+      const serviceKeyContent = await new Promise((resolve, reject) => {
+        fs.readFile(SERVICE_KEY_CONFIG, 'utf8', (err, content) => {
+          if (err) reject(err);
+          else resolve(content);
+        });
+      });
+      config.serviceKey = JSON.parse(serviceKeyContent);
+    } catch (error) {
+      console.log('Could not read service key:', error.message);
+    }
+    
+    // Read calendar config
+    try {
+      const calendarConfig = await readConfigurationFile();
+      config.roomName = calendarConfig.title;
+      config.calendarId = calendarConfig.calendar_id;
+    } catch (error) {
+      console.log('Could not read calendar configuration:', error.message);
+    }
+    
+    return config;
+  } catch (error) {
+    console.error('Failed to get current configuration:', error);
+    return {};
+  }
+});
+
+ipcMain.handle('reconfigure', async () => {
+  try {
+    console.log('Starting reconfiguration flow...');
+    
+    // Get current configuration
+    let currentConfig = null;
+    try {
+      const calendarConfig = await readConfigurationFile();
+      currentConfig = {
+        roomName: calendarConfig.title,
+        calendarId: calendarConfig.calendar_id
+      };
+    } catch (error) {
+      console.log('Could not read current calendar configuration');
+    }
+
+    // Set current config in web server if it exists
+    if (configServer && currentConfig) {
+      configServer.setCurrentConfig(currentConfig);
+    }
+    
+    // Show the service key configuration dialog (now with dismiss option)
+    const serviceKeyDialog = new BrowserWindow({
+      width: 600,
+      height: 900,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+        enableRemoteModule: false,
+        preload: path.join(__dirname, 'preload.js')
+      }
+    });
+
+    serviceKeyDialog.loadFile('src/templates/service-key-config.html');
+    if (process.env.NODE_ENV !== 'development')
+      serviceKeyDialog.setFullScreen(true);
+
+    // Return success - dialog is shown, user can dismiss or reconfigure
+    return { success: true };
+    
+  } catch (error) {
+    console.error('Failed to start reconfiguration:', error);
     return { success: false, error: error.message };
   }
 });

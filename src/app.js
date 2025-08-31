@@ -6,6 +6,7 @@ import { getEvents } from './store/actions';
 import ErrorBoundary from './components/error_boundary';
 import withErrorBoundary from './components/with_error_boundary';
 import OfflineIndicator from './components/offline_indicator';
+import ConfigIndicator from './components/config_indicator';
 import { STATUS_UPDATE_INTERVAL_MS } from './constants';
 import { getCalendarAPIManager } from './util/calendar_api_manager';
 
@@ -103,6 +104,7 @@ function App({getEvents, route, children}) {
           {drawFooter()}
         </ErrorBoundary>
         <OfflineIndicator position="top-right" showOnlineStatus={false} />
+        <ConfigIndicator position="top-left" />
       </div>
     </ErrorBoundary>
   );

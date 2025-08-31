@@ -473,9 +473,51 @@ Example:
           }
           
           deviceInfo.textContent = deviceText;
+
+          // Handle reconfiguration mode
+          if (info.isReconfiguration && info.currentConfig) {
+            handleReconfigurationMode(info.currentConfig);
+          }
         } catch (error) {
           deviceInfo.textContent = 'Connected to Booking Pal device';
         }
+      }
+
+      // Handle reconfiguration mode
+      function handleReconfigurationMode(currentConfig) {
+        // Update header
+        document.querySelector('.header h1').textContent = 'Reconfigure Booking Pal';
+        document.querySelector('.header p').textContent = 'Update your room settings';
+
+        // Add current config display
+        const currentConfigDiv = document.createElement('div');
+        currentConfigDiv.className = 'device-info';
+        currentConfigDiv.style.marginTop = '1rem';
+        currentConfigDiv.innerHTML = `
+          <strong>Current Settings:</strong><br>
+          Room: ${currentConfig.roomName || 'Not set'}<br>
+          Calendar: ${currentConfig.calendarId ? 'Configured' : 'Not set'}
+        `;
+        document.querySelector('.device-info').parentNode.appendChild(currentConfigDiv);
+
+        // Pre-fill form if data available
+        if (currentConfig.roomName) {
+          document.getElementById('room-name').value = currentConfig.roomName;
+        }
+        if (currentConfig.calendarId) {
+          document.getElementById('calendar-id').value = currentConfig.calendarId;
+        }
+
+        // Show room config section by default in reconfiguration mode
+        document.getElementById('room-config').style.display = 'block';
+
+        // Update instructions for reconfiguration
+        document.querySelector('.instructions h3').textContent = 'Update Configuration (Optional)';
+        document.querySelector('.instructions').innerHTML = `
+          <h3>Update Configuration (Optional)</h3>
+          <p>You can update your service account, room name, or calendar settings below. Leave fields unchanged to keep current settings.</p>
+          <p>If you only want to update room details, you can skip the service account section.</p>
+        `;
       }
 
       // Real-time validation

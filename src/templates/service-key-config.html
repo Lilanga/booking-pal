@@ -79,6 +79,38 @@
         margin: 0;
       }
 
+      .close-button {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        width: 32px;
+        height: 32px;
+        border: none;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border-radius: 50%;
+        font-size: 18px;
+        cursor: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s;
+      }
+
+      .close-button:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .reconfiguration-notice {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem -2rem 0;
+        font-size: 0.9rem;
+        text-align: left;
+      }
+
       .step-indicator {
         display: flex;
         justify-content: center;
@@ -428,7 +460,12 @@
       <div class="config-container">
         <div class="logo-section">
           <h1>Booking Pal</h1>
-          <p>Google Service Account Setup</p>
+          <p id="setup-title">Google Service Account Setup</p>
+          
+          <!-- Close button for reconfiguration -->
+          <button class="close-button" id="close-btn" title="Close without changes" style="display: none;">
+            ✕
+          </button>
         </div>
 
         <div class="step-indicator">
@@ -476,7 +513,31 @@
             </div>
 
             <div class="input-group">
-              <label for="service-key">Or paste the JSON content directly:</label>
+              <label for="room-name">Room Name:</label>
+              <input
+                type="text"
+                id="room-name"
+                name="room-name"
+                placeholder="e.g., Conference Room A"
+                style="font-size: 1rem; padding: 0.75rem; border: 2px solid #E0E0E0; border-radius: 8px; width: 100%; box-sizing: border-box;"
+              />
+              <div class="help-text">This name will appear on the room display</div>
+            </div>
+
+            <div class="input-group">
+              <label for="calendar-id">Google Calendar ID:</label>
+              <input
+                type="text"
+                id="calendar-id"
+                name="calendar-id"
+                placeholder="calendar@example.com"
+                style="font-size: 1rem; padding: 0.75rem; border: 2px solid #E0E0E0; border-radius: 8px; width: 100%; box-sizing: border-box;"
+              />
+              <div class="help-text">Find this in your Google Calendar settings under "Calendar ID"</div>
+            </div>
+
+            <div class="input-group">
+              <label for="service-key">Service Account JSON:</label>
               <textarea
                 id="service-key"
                 name="service-key"
@@ -540,9 +601,64 @@ Example:
       const step2 = document.getElementById('step-2');
       const configUrl = document.getElementById('config-url');
       const qrCode = document.getElementById('qr-code');
+      const closeBtn = document.getElementById('close-btn');
+      const setupTitle = document.getElementById('setup-title');
+      const roomNameInput = document.getElementById('room-name');
+      const calendarIdInput = document.getElementById('calendar-id');
 
       let currentServiceKey = null;
       let validationTimeout = null;
+      let isReconfiguration = false;
+
+      // Check if this is a reconfiguration and prepopulate fields
+      async function checkIfReconfiguration() {
+        try {
+          const config = await window.electron.getCurrentConfig();
+          
+          if (config.roomName || config.calendarId || config.serviceKey) {
+            isReconfiguration = true;
+            setupTitle.textContent = 'Reconfigure Room Settings';
+            closeBtn.style.display = 'flex';
+            
+            // Prepopulate all fields
+            if (config.serviceKey) {
+              textarea.value = JSON.stringify(config.serviceKey, null, 2);
+              // Trigger validation for the prepopulated key
+              setTimeout(() => {
+                validateServiceKey(textarea.value.trim());
+              }, 100);
+            }
+            
+            if (config.roomName) {
+              roomNameInput.value = config.roomName;
+            }
+            
+            if (config.calendarId) {
+              calendarIdInput.value = config.calendarId;
+            }
+            
+            // Add reconfiguration notice with current config
+            const notice = document.createElement('div');
+            notice.className = 'reconfiguration-notice';
+            notice.innerHTML = `
+              <strong>Current Configuration:</strong><br>
+              Room: ${config.roomName || 'Not set'}<br>
+              Calendar: ${config.calendarId || 'Not set'}<br>
+              Service Account: ${config.serviceKey ? 'Configured' : 'Not set'}<br><br>
+              <em>All fields below are pre-filled with current values. Change only what you want to update.</em>
+            `;
+            setupTitle.parentNode.appendChild(notice);
+          }
+        } catch (error) {
+          // If we can't get current config, assume this is initial setup
+          console.log('Cannot determine current configuration, assuming initial setup');
+        }
+      }
+
+      // Close button functionality
+      closeBtn.addEventListener('click', () => {
+        window.close();
+      });
 
       // Request configuration URL from main process
       async function initializeConfigServer() {
@@ -715,11 +831,18 @@ Example:
         showValidationStatus('validating', 'Testing Google Calendar connection...');
 
         try {
-          // Send the service key to main process for validation and saving
-          const result = await window.electron.sendServiceKey(currentServiceKey);
+          // Prepare the configuration data
+          const configData = {
+            serviceKey: currentServiceKey,
+            roomName: roomNameInput.value.trim() || null,
+            calendarId: calendarIdInput.value.trim() || null
+          };
+          
+          // Send the configuration to main process for validation and saving
+          const result = await window.electron.saveConfiguration(configData);
           
           if (result.success) {
-            showSuccess('Service account key saved successfully! Starting application...');
+            showSuccess('Configuration saved successfully! Starting application...');
             step2.classList.add('completed');
             
             // Wait a moment to show success, then close window
@@ -727,7 +850,7 @@ Example:
               window.close();
             }, 1500);
           } else {
-            throw new Error(result.error || 'Failed to save service key');
+            throw new Error(result.error || 'Failed to save configuration');
           }
 
         } catch (error) {
@@ -740,7 +863,8 @@ Example:
       });
 
       // Initialize on load
-      window.addEventListener('load', () => {
+      window.addEventListener('load', async () => {
+        await checkIfReconfiguration();
         initializeConfigServer();
         textarea.focus();
       });

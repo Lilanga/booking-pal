@@ -1,0 +1,272 @@
+// Configuration Indicator Styles
+.config-indicator {
+  position: fixed;
+  z-index: 9998; // Just below offline indicator
+  max-width: 300px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 12px;
+
+  // Position variants
+  &--top-left {
+    top: 16px;
+    left: 16px;
+  }
+
+  &--top-right {
+    top: 16px;
+    right: 16px;
+  }
+
+  &--bottom-left {
+    bottom: 16px;
+    left: 16px;
+  }
+
+  &--bottom-right {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  // Status indicator
+  &__status {
+    // Reset button styles
+    border: none;
+    background: none;
+    font: inherit;
+    margin: 0;
+    height: fit-content;
+    width: fit-content;
+
+    // Original styles - icon only, more compact
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    user-select: none;
+    background: rgba(107, 114, 128, 0.9); // Gray background for config
+    color: white;
+    border: 1px solid rgba(107, 114, 128, 0.3);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      background: rgba(75, 85, 99, 0.9); // Slightly darker on hover
+    }
+
+    &:focus {
+      outline: 2px solid #0066cc;
+      outline-offset: 2px;
+    }
+
+    &:focus:not(:focus-visible) {
+      outline: none;
+    }
+  }
+
+  &__icon {
+    margin: 0;
+    font-size: 16px;
+  }
+
+  // Configuring state
+  &--configuring &__status {
+    background: rgba(59, 130, 246, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+
+    .config-indicator__icon {
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  // Details panel
+  &__details {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 8px;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(10px);
+    min-width: 220px;
+    animation: slideDown 0.2s ease-out;
+
+    // Adjust position for different placements
+    .config-indicator--top-right &,
+    .config-indicator--bottom-right & {
+      left: auto;
+      right: 0;
+    }
+
+    .config-indicator--bottom-left &,
+    .config-indicator--bottom-right & {
+      top: auto;
+      bottom: 100%;
+      margin-top: 0;
+      margin-bottom: 8px;
+      animation: slideUp 0.2s ease-out;
+    }
+  }
+
+  &__detail-item {
+    margin-bottom: 8px;
+    color: #374151;
+    line-height: 1.4;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    strong {
+      font-weight: 600;
+      color: #111827;
+    }
+  }
+
+  &__info {
+    padding: 6px 8px;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    border-radius: 4px;
+    color: #1e40af;
+    font-weight: 500;
+    font-size: 11px;
+    margin-top: 8px;
+  }
+
+  &__reconfig-btn {
+    width: 100%;
+    padding: 8px 12px;
+    margin-top: 8px;
+    background: #6b7280;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background: #4b5563;
+    }
+
+    &:active:not(:disabled) {
+      background: #374151;
+    }
+
+    &:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// Animations (reuse from offline indicator)
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .config-indicator {
+
+    &--top-left,
+    &--top-right {
+      top: 8px;
+    }
+
+    &--top-left,
+    &--bottom-left {
+      left: 8px;
+    }
+
+    &--top-right,
+    &--bottom-right {
+      right: 8px;
+    }
+
+    &--bottom-left,
+    &--bottom-right {
+      bottom: 8px;
+    }
+
+    &__status {
+      padding: 6px;
+      width: 32px;
+      height: 32px;
+    }
+
+    &__icon {
+      font-size: 14px;
+    }
+
+    &__details {
+      min-width: 200px;
+      font-size: 11px;
+    }
+  }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+  .config-indicator {
+    &__details {
+      background: rgba(31, 41, 55, 0.95);
+      border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    &__detail-item {
+      color: #d1d5db;
+
+      strong {
+        color: #f3f4f6;
+      }
+    }
+
+    &__info {
+      background: rgba(59, 130, 246, 0.2);
+      border-color: rgba(59, 130, 246, 0.4);
+      color: #93c5fd;
+    }
+  }
+}

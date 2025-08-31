@@ -7,6 +7,9 @@ contextBridge.exposeInMainWorld('electron', {
   sendServiceKey: (serviceKey) => ipcRenderer.invoke('save-service-key', serviceKey),
   startConfigServer: () => ipcRenderer.invoke('start-config-server'),
   stopConfigServer: () => ipcRenderer.invoke('stop-config-server'),
+  reconfigure: () => ipcRenderer.invoke('reconfigure'),
+  getCurrentConfig: () => ipcRenderer.invoke('get-current-config'),
+  saveConfiguration: (configData) => ipcRenderer.invoke('save-configuration', configData),
 });
 
 contextBridge.exposeInMainWorld('calendarAPI', {

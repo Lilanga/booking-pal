@@ -101,7 +101,9 @@ class ConfigServer {
       res.json({
         hostname: os.hostname(),
         platform: os.platform(),
-        networkInterfaces: this.getNetworkAddresses()
+        networkInterfaces: this.getNetworkAddresses(),
+        isReconfiguration: this.isReconfiguration || false,
+        currentConfig: this.currentConfig || null
       });
     });
   }
@@ -171,6 +173,11 @@ class ConfigServer {
 
   setServiceKeyCallback(callback) {
     this.onServiceKeyReceived = callback;
+  }
+
+  setCurrentConfig(config) {
+    this.currentConfig = config;
+    this.isReconfiguration = true;
   }
 }
 
