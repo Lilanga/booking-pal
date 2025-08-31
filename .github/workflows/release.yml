@@ -1,0 +1,269 @@
+name: Release Build
+
+on:
+  push:
+    tags:
+      - "release-*"
+
+jobs:
+  create-release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+      release_id: ${{ steps.create_release.outputs.id }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Extract version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/release-}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION"
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: BookingPal v${{ steps.get_version.outputs.version }}
+          body: |
+            ## BookingPal v${{ steps.get_version.outputs.version }}
+
+            ### Downloads
+            - **Windows**: Download the `.exe` installer or `-portable.exe` for portable version
+            - **macOS**: Download the `.dmg` file for easy installation
+            - **Linux**: Download the `.AppImage` for universal Linux or `.deb` for Debian/Ubuntu
+            - **Raspberry Pi**: Download the ARM64 builds for Raspberry Pi devices
+
+            ### Installation Notes
+            - First run will prompt for the Google Calendar setup. Follow the instructions in readme to authorize access.
+            - Configuration is stored in the user's home directory under `.bookingpal`.
+            - Refer to `clear-config.js` in `scripts` folder to reset existing configuration if needed
+
+            ### Changelog
+            See commit history for detailed changes in this release.
+          draft: false
+          prerelease: false
+
+  build-windows:
+    name: Build Windows
+    runs-on: windows-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and package for Windows
+        run: |
+          npm run build
+          npm run dist:win
+
+      - name: Upload Windows Installer
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal Setup 0.1.0.exe
+          asset_name: BookingPal-Setup-${{ github.ref_name }}.exe
+          asset_content_type: application/octet-stream
+
+      - name: Upload Windows Portable
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-portable.exe
+          asset_name: BookingPal-${{ github.ref_name }}-portable.exe
+          asset_content_type: application/octet-stream
+
+  build-macos:
+    name: Build macOS
+    runs-on: macos-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and package for macOS
+        run: |
+          npm run build
+          npm run dist:mac
+
+      - name: Upload macOS DMG (x64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0.dmg
+          asset_name: BookingPal-${{ github.ref_name }}-mac-x64.dmg
+          asset_content_type: application/octet-stream
+
+      - name: Upload macOS DMG (ARM64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-arm64.dmg
+          asset_name: BookingPal-${{ github.ref_name }}-mac-arm64.dmg
+          asset_content_type: application/octet-stream
+
+      - name: Upload macOS ZIP (x64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-mac.zip
+          asset_name: BookingPal-${{ github.ref_name }}-mac-x64.zip
+          asset_content_type: application/zip
+
+      - name: Upload macOS ZIP (ARM64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-arm64-mac.zip
+          asset_name: BookingPal-${{ github.ref_name }}-mac-arm64.zip
+          asset_content_type: application/zip
+
+  build-linux:
+    name: Build Linux
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and package for Linux
+        run: |
+          npm run build
+          npm run dist:linux
+
+      - name: Upload Linux AppImage (x64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0.AppImage
+          asset_name: BookingPal-${{ github.ref_name }}-linux-x64.AppImage
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux AppImage (ARM64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-arm64.AppImage
+          asset_name: BookingPal-${{ github.ref_name }}-linux-arm64.AppImage
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux DEB (x64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0.deb
+          asset_name: BookingPal-${{ github.ref_name }}-linux-x64.deb
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux DEB (ARM64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-arm64.deb
+          asset_name: BookingPal-${{ github.ref_name }}-linux-arm64.deb
+          asset_content_type: application/octet-stream
+
+      - name: Upload Linux RPM (x64)
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0.rpm
+          asset_name: BookingPal-${{ github.ref_name }}-linux-x64.rpm
+          asset_content_type: application/octet-stream
+
+  build-raspberry-pi:
+    name: Build Raspberry Pi
+    runs-on: ubuntu-latest
+    needs: create-release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and package for Raspberry Pi
+        run: |
+          npm run build
+          npm run dist:pi
+
+      - name: Upload Raspberry Pi AppImage
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-arm64.AppImage
+          asset_name: BookingPal-${{ github.ref_name }}-raspberry-pi.AppImage
+          asset_content_type: application/octet-stream
+
+      - name: Upload Raspberry Pi DEB
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: dist/electron-builder/BookingPal-0.1.0-arm64.deb
+          asset_name: BookingPal-${{ github.ref_name }}-raspberry-pi.deb
+          asset_content_type: application/octet-stream
