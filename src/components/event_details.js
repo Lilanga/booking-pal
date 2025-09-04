@@ -28,17 +28,23 @@ import EventDuration from './event_duration';
           {isCurrent ? 'CURRENT MEETING' : 'COMING UP'}
         </h3>
         <h3 className="event-details-name">{currentEvent.summary}</h3>
-        <p className="event-details-description">{currentEvent.description}</p>
-        <EventDuration event={currentEvent} />
-        <Attendees event={currentEvent} />
-        <div className="event-details-qr">
-          <QRCode
-            size={256}
-            style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-            value={currentEvent.htmlLink}
-            viewBox={"0px 0px 256px 256px"}
-          />
+        <div className="event-duration-container">
+          <EventDuration event={currentEvent} />
         </div>
+        {expanded && (
+          <div className="event-details-expanded">
+            <p className="event-details-description">{currentEvent.description}</p>
+            <Attendees event={currentEvent} />
+            <div className="event-details-qr">
+              <QRCode
+                size={256}
+                style={{ height: "auto", maxWidth: "100%", width: "100%" }}
+                value={currentEvent.htmlLink}
+                viewBox={"0px 0px 256px 256px"}
+              />
+            </div>
+          </div>
+        )}
       </div>
   );
 };

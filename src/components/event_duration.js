@@ -13,12 +13,35 @@ const EventDuration = ({event}) => {
   }
 
   const isAllDay = isAllDayEvent(event);
+  
+  if (isAllDay) {
+    return (
+      <p className="event-duration">All Day Event</p>
+    );
+  }
+
+  // Calculate duration in minutes
+  const durationMinutes = endTime.diff(startTime, 'minutes');
+  const hours = Math.floor(durationMinutes / 60);
+  const minutes = durationMinutes % 60;
+  
+  // Format duration
+  let durationText = '';
+  if (hours > 0 && minutes > 0) {
+    durationText = `${hours}h ${minutes}min`;
+  } else if (hours > 0) {
+    durationText = `${hours}h`;
+  } else {
+    durationText = `${minutes}min`;
+  }
+
+  // Use 12-hour format with AM/PM
+  const startFormatted = startTime.format("h:mm A");
+  const endFormatted = endTime.format("h:mm A");
+  
   return (
     <p className="event-duration">
-      {isAllDay ?
-        'All Day Event' :
-        `${startTime.format("H:mm")} - ${endTime.format("H:mm")}`
-      }
+      {`${startFormatted} - ${endFormatted} (${durationText})`}
     </p>
   );
 };

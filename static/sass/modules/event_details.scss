@@ -10,6 +10,21 @@
   height: 640px;
   background-color: white;
 
+  // Responsive height adjustments
+  @media (max-width: 600px),
+  (max-height: 500px) {
+    height: 300px; // Reduced height for medium screens
+  }
+
+  @media (max-width: 480px),
+  (max-height: 400px) {
+    height: 300px; // Further reduction for small screens
+  }
+
+  @media (max-width: 320px) or (max-height: 320px) {
+    height: 250px; // Compact height for tiny screens
+  }
+
   .event-details-status {
     width: 396px;
     height: 44px;
@@ -28,11 +43,61 @@
     text-align: center;
   }
 
+  .event-duration-container {
+    width: 100%;
+    padding: 20px 15px;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    border-radius: 12px;
+    margin: 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    border: 2px solid rgba($primary-color, 0.1);
+    display: block !important; // Ensure container is always visible
+    visibility: visible !important; // Force visibility
+
+    // Responsive adjustments
+    @media (max-width: 600px),
+    (max-height: 500px) {
+      padding: 15px 10px;
+      margin: 15px 0;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 480px),
+    (max-height: 400px) {
+      padding: 12px 8px;
+      margin: 12px 0;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 320px) or (max-height: 320px) {
+      padding: 10px 5px;
+      margin: 10px 0;
+      border-radius: 6px;
+    }
+  }
+
   .event-duration {
     font-family: "Mark Pro Bold";
-    font-size: 30px;
-    height: 50px;
-    line-height: 50px;
+    font-size: 24px;
+    color: $primary-color;
+    margin: 0;
+    text-align: center;
+
+    // Responsive font sizing
+    @media (max-width: 600px),
+    (max-height: 500px) {
+      font-size: 22px;
+    }
+
+    @media (max-width: 480px),
+    (max-height: 400px) {
+      font-size: 20px;
+    }
+
+    @media (max-width: 320px) or (max-height: 320px) {
+      font-size: 18px;
+    }
   }
 
   .event-details-creator {
@@ -49,12 +114,37 @@
     text-align: center;
   }
 
+  .event-details-expanded {
+    width: 100%;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    margin-top: 15px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+    animation: slideDown 0.3s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
   .event-details-qr {
-    height: "auto";
-    margin: "0 auto";
+    height: auto;
+    margin: 20px auto 15px auto;
     max-width: 96px;
-    width: "100%";
-    margin-bottom: 15px;
+    width: 100%;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   }
 
   .event-details-attendees {
@@ -81,6 +171,28 @@
     &.expanded i {
       transition: transform $transition-duration ease-in;
       transform: rotate(180deg);
+    }
+
+    // Responsive positioning for smaller screens
+    @media (max-width: 600px),
+    (max-height: 500px) {
+      right: 30px;
+      top: -25px; // Move closer to ensure visibility
+    }
+
+    @media (max-width: 480px),
+    (max-height: 400px) {
+      right: 20px;
+      top: -20px; // Even closer for small screens
+    }
+
+    @media (max-width: 320px) or (max-height: 320px) {
+      right: 15px;
+      top: -15px; // Minimal offset for tiny screens
+
+      // Make button smaller on tiny screens
+      width: 50px;
+      height: 50px;
     }
   }
 }

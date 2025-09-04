@@ -7,8 +7,11 @@ button {
   background: linear-gradient(135deg, white, white);
   padding: 0;
 
-  box-shadow: 3px 4px 5px rgba(46, 46, 46, 0.4);
-  transition: box-shadow 0.1s ease-in;
+  box-shadow: 0 8px 25px rgba(46, 46, 46, 0.15), 0 4px 10px rgba(46, 46, 46, 0.1);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Touch target optimization
+  position: relative;
 
   &.small {
     width: 63px;
@@ -22,11 +25,32 @@ button {
 
   &:focus {
     outline: none;
+    box-shadow: 0 8px 25px rgba(46, 46, 46, 0.15), 0 4px 10px rgba(46, 46, 46, 0.1), 0 0 0 4px rgba($primary-blue, 0.3);
+  }
+
+  &:active {
+    transform: scale(0.95);
+    box-shadow: 0 4px 15px rgba(46, 46, 46, 0.2), 0 2px 5px rgba(46, 46, 46, 0.15);
   }
 
   &.clicked {
-    box-shadow: 0px 0px 30px 10px rgba(200, 200, 200, 0.4);
-    transition: box-shadow 0.4s ease-in;
+    box-shadow: 0 0 0 0 rgba($primary-blue, 0.7), 0 0 0 20px rgba($primary-blue, 0.3), 0 0 0 40px rgba($primary-blue, 0.1);
+    animation: touch-ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  // Hover effect for development/mouse users
+  &:hover:not(:active) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(46, 46, 46, 0.18), 0 6px 15px rgba(46, 46, 46, 0.12);
+  }
+}
+
+@keyframes touch-ripple {
+  from {
+    box-shadow: 0 0 0 0 rgba($primary-blue, 0.7), 0 0 0 0 rgba($primary-blue, 0.3), 0 0 0 0 rgba($primary-blue, 0.1);
+  }
+  to {
+    box-shadow: 0 0 0 0 rgba($primary-blue, 0), 0 0 0 20px rgba($primary-blue, 0), 0 0 0 40px rgba($primary-blue, 0);
   }
 }
 

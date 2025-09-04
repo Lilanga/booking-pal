@@ -16,15 +16,21 @@ const Schedule = ({ events }) => {
   }, []);
 
   const timeLine = () => (
-    <span className="time-line" />
+    <div className="time-line-container">
+      <div className="time-line-label">NOW</div>
+      <span className="time-line" />
+      <div className="time-line-time">{moment().format("h:mm A")}</div>
+    </div>
   );
 
   const renderedEvents = events.map((event, index) => {
     const eventBefore = index > 0 ? events[index - 1] : null;
     const isBefore = eventBefore ? isBeforeNow(eventBefore) && isAfterNow(event) : isAfterNow(event);
+    const hasTimeLine = isBefore || isCurrent(event);
+    const eventClasses = `flex-container schedule-event${hasTimeLine ? ' with-timeline' : ''}`;
 
     return (
-      <div className="flex-container schedule-event" key={event.etag}>
+      <div className={eventClasses} key={event.etag}>
         {isBefore ? <span ref={timeLinePositionRef} /> : null}
         {isBefore ? timeLine() : null}
         <EventDuration event={event} />
@@ -37,7 +43,7 @@ const Schedule = ({ events }) => {
   // Special case where the time line is located after all events
   if (events.length > 0 && timeLeft(events[events.length - 1]) < 0) {
     renderedEvents.push((
-      <div className="flex-container schedule-event" key={events.length}>
+      <div className="flex-container schedule-event with-timeline" key={events.length}>
         <span ref={timeLinePositionRef} />
         <div className="schedule-event-name" aria-hidden="true" />
         {timeLine()}
@@ -51,7 +57,10 @@ const Schedule = ({ events }) => {
       appear={true}
       timeout={{ exit: 300, enter: 500, appear: 500 }}>
       <div className="flex-container schedule">
-        <h3 className="schedule-header">{(moment().format("dddd, DD.MM.YYYY")).toUpperCase()}</h3>
+        <h3 className="schedule-header">
+          Today's Schedule
+          <span className="schedule-date">{moment().format("dddd, MMMM Do")}</span>
+        </h3>
         <div className="schedule-event-list">
           <div className="flex-container">
             {renderedEvents}

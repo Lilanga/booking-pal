@@ -1,27 +1,42 @@
-// initial fonts
+// initial fonts - optimized for performance
 @font-face {
   font-family: 'Mark Pro';
   src: url('../fonts/MarkPro.otf');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
   font-family: 'Mark Pro Bold';
   src: url('../fonts/MarkPro-Bold.otf');
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
 }
 
 @font-face {
   font-family: 'Mark Pro Medium';
   src: url('../fonts/MarkPro-Medium.otf');
+  font-display: swap;
+  font-weight: 600;
+  font-style: normal;
 }
 
 @font-face {
   font-family: 'Mark Pro Book';
   src: url('../fonts/MarkPro-Book.otf');
+  font-display: swap;
+  font-weight: 400;
+  font-style: normal;
 }
 
 @font-face {
   font-family: 'Mark Pro Light';
   src: url('../fonts/MarkPro-Light.otf');
+  font-display: swap;
+  font-weight: 300;
+  font-style: normal;
 }
 
 

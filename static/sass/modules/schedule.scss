@@ -1,38 +1,165 @@
 .schedule {
 
-  .time-line {
-    border: 1px solid $primary-color;
+  .time-line-container {
+    position: relative;
     width: 100%;
-    height: 0;
-    margin-bottom: 3px;
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .time-line:before, .time-line:after {
+  .time-line {
+    position: relative;
+    background: linear-gradient(90deg, $error-red, #ff6b6b, $error-red);
+    width: 100%;
+    height: 3px;
+    margin-bottom: 3px;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba($error-red, 0.3);
+    animation: pulse-line 2s infinite;
+  }
+
+  .time-line:before,
+  .time-line:after {
     content: '';
-    height: 14px;
-    width: 14px;
-    border-radius: 14px;
-    float: left;
-    background: $primary-color;
-    margin-top: -7px;
+    position: absolute;
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: $error-red;
+    top: 50%;
+    transform: translateY(-50%);
+    box-shadow: 0 0 0 4px rgba($error-red, 0.2);
+    animation: pulse-dot 2s infinite;
   }
 
   .time-line:after {
-    float: right;
-    margin-right: -2px;
+    right: -2px;
   }
 
   .time-line:before {
-    margin-left: -2px;
+    left: -2px;
+  }
+
+  .time-line-label {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: $error-red;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-family: "Mark Pro Bold";
+    font-size: 12px;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 8px rgba($error-red, 0.3);
+    animation: pulse-label 2s infinite;
+  }
+
+  .time-line-time {
+    position: absolute;
+    bottom: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: "Mark Pro Book";
+    font-size: 14px;
+    color: $error-red;
+    font-weight: bold;
+  }
+
+  @keyframes pulse-line {
+
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 2px 8px rgba($error-red, 0.3);
+    }
+
+    50% {
+      opacity: 0.8;
+      box-shadow: 0 2px 12px rgba($error-red, 0.5);
+    }
+  }
+
+  @keyframes pulse-dot {
+
+    0%,
+    100% {
+      box-shadow: 0 0 0 4px rgba($error-red, 0.2);
+    }
+
+    50% {
+      box-shadow: 0 0 0 8px rgba($error-red, 0.1);
+    }
+  }
+
+  @keyframes pulse-label {
+
+    0%,
+    100% {
+      transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+      transform: translateX(-50%) scale(1.05);
+    }
   }
 
   .schedule-header {
-    font-family: "Mark Pro Book";
-    letter-spacing: 0.7px;
+    font-family: "Mark Pro Bold";
+    letter-spacing: 0.5px;
     color: $primary-color;
-    margin: 65px 0 31px 0;
-    line-height: 44px;
+    margin: 50px 0 20px 0;
+    line-height: 1.2;
+    text-align: center;
+    font-size: 28px;
+    font-weight: 600;
+
+    .schedule-date {
+      display: block;
+      font-family: "Mark Pro Book";
+      font-size: 16px;
+      font-weight: 400;
+      color: rgba($primary-color, 0.7);
+      margin-top: 5px;
+      letter-spacing: 0.3px;
+    }
+
+    @media (max-width: 480px),
+    (max-height: 400px) {
+      margin: 35px 0 15px 0;
+      font-size: 24px;
+      
+      .schedule-date {
+        font-size: 14px;
+        margin-top: 3px;
+      }
+    }
+
+    @media (max-width: 420px),
+    (max-height: 360px) {
+      font-size: 20px;
+      margin: 25px 0 12px 0;
+      
+      .schedule-date {
+        font-size: 12px;
+        margin-top: 2px;
+      }
+    }
+
+    @media (max-width: 320px) or (max-height: 320px) {
+      margin: 20px 0 10px 0;
+      font-size: 18px;
+      
+      .schedule-date {
+        font-size: 10px;
+        margin-top: 2px;
+      }
+    }
   }
+
 
   .event-duration {
     font-family: "Mark Pro Bold";
@@ -50,12 +177,54 @@
     width: 396px;
     text-align: center;
     margin: 0;
+
+    // Responsive text sizing
+    // @media (max-width: 600px), (max-height: 500px) {
+    //   font-size: 18px;
+    //   width: auto;
+    //   line-height: 24px;
+    // }
+
+
+    @media (max-width: 480px),
+    (max-height: 400px) {
+      font-size: 16px;
+      line-height: 22px;
+    }
+
+    @media (max-width: 420px),
+    (max-height: 360px) {
+      font-size: 12px;
+      line-height: 18px;
+    }
+
+    @media (max-width: 320px) or (max-height: 320px) {
+      font-size: 10px;
+      line-height: 16px;
+    }
   }
 
   .schedule-event-list {
     height: 543px;
     overflow-y: auto;
     width: 100%;
+
+    // Responsive height adjustments
+    // @media (max-width: 600px), (max-height: 500px) {
+    //   height: auto;
+    //   overflow-y: visible;
+    // }
+
+    @media (max-width: 480px),
+    (max-height: 400px) {
+      height: auto;
+      overflow-y: visible;
+    }
+
+    @media (max-width: 320px) or (max-height: 320px) {
+      height: auto;
+      overflow-y: visible;
+    }
   }
 
   .schedule-event {
