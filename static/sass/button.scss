@@ -16,11 +16,29 @@ button {
   &.small {
     width: 63px;
     height: 63px;
+
+    i.icon {
+      background-size: 80%;
+
+      &.icon-15-min,
+      &.icon-30-min {
+        background-size: 75%;
+      }
+    }
   }
 
   &.big {
     width: 200px;
     height: 200px;
+
+    i.icon {
+      background-size: 85%;
+
+      &.icon-15-min,
+      &.icon-30-min {
+        background-size: 80%;
+      }
+    }
   }
 
   &:focus {
@@ -36,12 +54,31 @@ button {
   &.clicked {
     box-shadow: 0 0 0 0 rgba($primary-blue, 0.7), 0 0 0 20px rgba($primary-blue, 0.3), 0 0 0 40px rgba($primary-blue, 0.1);
     animation: touch-ripple 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+
+    i.icon {
+      opacity: 1;
+      filter: brightness(0.1) sepia(1) saturate(4) hue-rotate(200deg);
+      transform: scale(1.1);
+    }
   }
 
   // Hover effect for development/mouse users
   &:hover:not(:active) {
     transform: translateY(-2px);
     box-shadow: 0 12px 30px rgba(46, 46, 46, 0.18), 0 6px 15px rgba(46, 46, 46, 0.12);
+
+    i.icon {
+      opacity: 1;
+      filter: brightness(0.2) sepia(1) saturate(3) hue-rotate(180deg);
+      transform: scale(1.05);
+    }
+  }
+
+  &:active {
+    i.icon {
+      transform: scale(0.95);
+      opacity: 0.7;
+    }
   }
 }
 
@@ -49,6 +86,7 @@ button {
   from {
     box-shadow: 0 0 0 0 rgba($primary-blue, 0.7), 0 0 0 0 rgba($primary-blue, 0.3), 0 0 0 0 rgba($primary-blue, 0.1);
   }
+
   to {
     box-shadow: 0 0 0 0 rgba($primary-blue, 0), 0 0 0 20px rgba($primary-blue, 0), 0 0 0 40px rgba($primary-blue, 0);
   }
@@ -61,16 +99,23 @@ i.icon {
 
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 100%;
+  background-size: 60%;
+  opacity: 0.8;
+  filter: brightness(0.3) sepia(1) saturate(2) hue-rotate(180deg);
+  transition: all 0.2s ease;
 
   &.icon-15-min {
     background-image: url('../icons/15.svg');
-    background-position: center 4px;
+    background-position: center center;
+    background-size: 85%;
+    opacity: 0.6;
   }
 
   &.icon-30-min {
     background-image: url('../icons/30.svg');
-    background-position: center 4px;
+    background-position: center center;
+    background-size: 85%;
+    opacity: 0.6;
   }
 
   &.icon-arrow-up {
