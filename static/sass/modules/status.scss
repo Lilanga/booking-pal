@@ -62,29 +62,29 @@
     }
 
     h1 {
-      margin-top: 40px;
+      margin: 40px auto 0 auto;
       font-family: 'Mark Pro Bold';
       letter-spacing: 1.3px;
       font-size: 80px;
-      width: 396px;
+      width: auto;
+      text-align: center;
 
       // Responsive font sizing
       @media (max-width: 600px),
       (max-height: 500px) {
         font-size: 60px;
-        width: auto;
-        margin-top: 20px;
+        margin: 20px auto 0 auto;
       }
 
       @media (max-width: 480px),
       (max-height: 400px) {
         font-size: 48px;
-        margin-top: 15px;
+        margin: 15px auto 0 auto;
       }
 
       @media (max-width: 320px) or (max-height: 320px) {
         font-size: 36px;
-        margin-top: 10px;
+        margin: 10px auto 0 auto;
         letter-spacing: 1px;
       }
     }
@@ -93,15 +93,15 @@
       font-family: 'Mark Pro Book';
       letter-spacing: 0.5px;
       font-size: 30px;
-      width: 396px;
-      height: 44px;
+      width: auto;
+      height: auto;
+      text-align: center;
+      margin: 0 auto;
 
       // Responsive font sizing
       @media (max-width: 600px),
       (max-height: 500px) {
         font-size: 24px;
-        width: auto;
-        height: auto;
       }
 
       @media (max-width: 480px),
