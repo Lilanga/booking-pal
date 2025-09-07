@@ -1,0 +1,456 @@
+// Custom Booking Popover Styles
+.custom-booking-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  animation: overlayFadeIn 0.2s ease-out;
+}
+
+.custom-booking-popover {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2), 0 8px 20px rgba(0, 0, 0, 0.1);
+  padding: 0;
+  width: 90%;
+  max-width: 400px;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: popoverSlideIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-family: 'Mark Pro Book', 'Segoe UI', 'Roboto', system-ui, sans-serif;
+
+  @media (max-width: 480px) {
+    width: 95%;
+    max-width: none;
+    margin: 20px;
+  }
+
+  .popover-header {
+    background: linear-gradient(135deg, $primary-color, darken($primary-color, 10%));
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    min-height: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
+    h4 {
+      margin: 0;
+      font-family: 'Mark Pro';
+      font-size: 14px;
+      font-weight: 500;
+      letter-spacing: 0.1px;
+      flex: 1;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 16px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 6px;
+      margin: 0;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      font-weight: 400;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.8;
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.15);
+        opacity: 1;
+        transform: none;
+      }
+
+      &:active {
+        background: rgba(255, 255, 255, 0.25);
+        transform: scale(0.95);
+      }
+
+      &:focus {
+        outline: 2px solid rgba(255, 255, 255, 0.3);
+        outline-offset: 2px;
+      }
+    }
+  }
+
+  .booking-controls {
+    padding: 20px;
+
+    .time-section {
+      margin-bottom: 24px;
+
+      &:last-of-type {
+        margin-bottom: 20px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 12px;
+        font-family: 'Mark Pro';
+        font-size: 14px;
+        font-weight: 500;
+        color: $neutral-700;
+        letter-spacing: 0.3px;
+      }
+
+      .time-slider-container {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        .time-slider {
+          flex: 1;
+          height: 6px;
+          border-radius: 3px;
+          background: $neutral-200;
+          outline: none;
+          cursor: pointer;
+          -webkit-appearance: none;
+          appearance: none;
+
+          &::-webkit-slider-thumb {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: $primary-color;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba($primary-color, 0.4);
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: scale(1.1);
+              box-shadow: 0 3px 8px rgba($primary-color, 0.5);
+            }
+
+            &:active {
+              transform: scale(1.2);
+              box-shadow: 0 2px 8px rgba($primary-color, 0.6);
+            }
+          }
+
+          &::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: $primary-color;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba($primary-color, 0.4);
+            transition: all 0.2s ease;
+
+            &:hover {
+              transform: scale(1.1);
+            }
+
+            &:active {
+              transform: scale(1.2);
+            }
+          }
+
+          &::-webkit-slider-track {
+            height: 6px;
+            border-radius: 3px;
+            background: $neutral-200;
+          }
+
+          &::-moz-range-track {
+            height: 6px;
+            border-radius: 3px;
+            background: $neutral-200;
+            border: none;
+          }
+        }
+
+        .time-display {
+          background: $neutral-100;
+          border: 1px solid $neutral-200;
+          border-radius: 8px;
+          padding: 8px 12px;
+          font-family: 'Mark Pro';
+          font-size: 14px;
+          font-weight: 500;
+          color: $neutral-700;
+          min-width: 65px;
+          text-align: center;
+          letter-spacing: 0.2px;
+        }
+      }
+    }
+
+    .booking-summary {
+      background: $neutral-50;
+      border: 1px solid $neutral-200;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+
+      .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+        font-size: 14px;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        span {
+          color: $neutral-600;
+          font-family: 'Mark Pro Book';
+        }
+
+        strong {
+          color: $neutral-800;
+          font-family: 'Mark Pro';
+          font-weight: 600;
+        }
+      }
+    }
+
+    .next-event-warning {
+      background: rgba($warning-orange, 0.1);
+      border: 1px solid rgba($warning-orange, 0.3);
+      border-radius: 8px;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: darken($warning-orange, 20%);
+      font-family: 'Mark Pro Book';
+
+      .icon-warning::before {
+        content: '⚠';
+        font-size: 14px;
+      }
+    }
+  }
+
+  .popover-actions {
+    padding: 10px 0px;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid $neutral-200;
+
+    .confirm-btn {
+      background: $primary-color;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: 'Mark Pro Book';
+      font-size: 13px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 2px 8px rgba($primary-color, 0.25);
+      width: 85%;
+      justify-content: center;
+
+      .booking-icon {
+        font-size: 14px;
+        opacity: 0.9;
+
+        &::before {
+          content: '🕐';
+          display: inline-block;
+          margin-right: 2px;
+        }
+      }
+
+      &:hover:not(:disabled) {
+        background: darken($primary-color, 8%);
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba($primary-color, 0.35);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba($primary-color, 0.3);
+        background: darken($primary-color, 12%);
+      }
+
+      &:disabled {
+        background: $neutral-400;
+        cursor: not-allowed;
+        opacity: 0.6;
+        box-shadow: none;
+        transform: none;
+      }
+
+      @media (max-width: 480px) {
+        padding: 8px 16px;
+        font-size: 12px;
+        height: 32px;
+        min-width: 130px;
+
+        .booking-icon {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 320px) {
+        padding: 7px 14px;
+        font-size: 11px;
+        height: 30px;
+        min-width: 120px;
+
+        .booking-icon {
+          font-size: 11px;
+        }
+      }
+    }
+  }
+}
+
+// Animations
+@keyframes overlayFadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes popoverSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+// Dark theme support
+@media (prefers-color-scheme: dark) {
+  .custom-booking-popover {
+    background: $neutral-800;
+    color: $neutral-200;
+
+    .popover-header {
+      background: linear-gradient(135deg, $dark-primary-color, darken($dark-primary-color, 10%));
+    }
+
+    .booking-controls {
+      .time-section {
+        label {
+          color: $neutral-300;
+        }
+
+        .time-slider-container {
+          .time-slider {
+            background: $neutral-600;
+
+            &::-webkit-slider-thumb {
+              background: $dark-primary-color;
+              box-shadow: 0 2px 6px rgba($dark-primary-color, 0.4);
+            }
+
+            &::-moz-range-thumb {
+              background: $dark-primary-color;
+              box-shadow: 0 2px 6px rgba($dark-primary-color, 0.4);
+            }
+
+            &::-webkit-slider-track {
+              background: $neutral-600;
+            }
+
+            &::-moz-range-track {
+              background: $neutral-600;
+            }
+          }
+
+          .time-display {
+            background: $neutral-700;
+            border-color: $neutral-600;
+            color: $neutral-200;
+          }
+        }
+      }
+
+      .booking-summary {
+        background: $neutral-700;
+        border-color: $neutral-600;
+
+        .summary-row {
+          span {
+            color: $neutral-400;
+          }
+
+          strong {
+            color: $neutral-100;
+          }
+        }
+      }
+
+      .next-event-warning {
+        background: rgba($warning-orange, 0.2);
+        border-color: rgba($warning-orange, 0.4);
+        color: lighten($warning-orange, 10%);
+      }
+    }
+
+    .popover-actions {
+      border-color: $neutral-600;
+
+      .cancel-btn {
+        background: $neutral-700;
+        color: $neutral-300;
+        border-color: $neutral-600;
+
+        &:hover {
+          background: $neutral-600;
+          color: $neutral-200;
+          border-color: $neutral-500;
+        }
+
+        &:active {
+          background: $neutral-500;
+        }
+      }
+
+      .confirm-btn {
+        background: $dark-primary-color;
+
+        &:hover:not(:disabled) {
+          background: darken($dark-primary-color, 8%);
+        }
+
+        &:active:not(:disabled) {
+          background: darken($dark-primary-color, 12%);
+        }
+
+        &:disabled {
+          background: $neutral-600;
+        }
+      }
+    }
+  }
+}

@@ -15,7 +15,7 @@ contextBridge.exposeInMainWorld('electron', {
 contextBridge.exposeInMainWorld('calendarAPI', {
   listEvents: () => ipcRenderer.send('calendar:list-events'),
   statusEvent: () => ipcRenderer.send('calendar:status-event'),
-  quickReservation: (duration) => ipcRenderer.send('calendar:quick-reservation', duration),
+  quickReservation: (duration, startTime) => ipcRenderer.send('calendar:quick-reservation', duration, startTime),
   finishReservation: (eventId) => ipcRenderer.send('calendar:finish-reservation', eventId),
   
   onListEventsSuccess: (callback) => ipcRenderer.on('calendar:list-events-success', callback),

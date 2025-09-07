@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import QRCode from "react-qr-code";
-import { connect } from 'react-redux';
 import Button from './button';
 import Empty from './empty';
 import Attendees from './attendees';
@@ -10,7 +9,7 @@ import { isEmpty } from 'lodash';
 import EventDuration from './event_duration';
 
  const EventDetails = (props) => {
-  const { currentEvent, isCurrent, expanded = false, handleExpandDetails } = props;
+  const { event, isCurrent, expanded = false, handleExpandDetails } = props;
 
   const btnClasses = classNames({
     small: true,
@@ -19,7 +18,7 @@ import EventDuration from './event_duration';
   });
 
   return (
-    isEmpty(currentEvent) ?
+    isEmpty(event) ?
       <Empty />
       :
       <div className='event-details flex-container'>
@@ -27,19 +26,19 @@ import EventDuration from './event_duration';
         <h3 className="event-details-status">
           {isCurrent ? 'CURRENT MEETING' : 'COMING UP'}
         </h3>
-        <h3 className="event-details-name">{currentEvent.summary}</h3>
+        <h3 className="event-details-name">{event.summary}</h3>
         <div className="event-duration-container">
-          <EventDuration event={currentEvent} />
+          <EventDuration event={event} />
         </div>
         {expanded && (
           <div className="event-details-expanded">
-            <p className="event-details-description">{currentEvent.description}</p>
-            <Attendees event={currentEvent} />
+            <p className="event-details-description">{event.description}</p>
+            <Attendees event={event} />
             <div className="event-details-qr">
               <QRCode
                 size={256}
                 style={{ height: "auto", maxWidth: "100%", width: "100%" }}
-                value={currentEvent.htmlLink}
+                value={event.htmlLink}
                 viewBox={"0px 0px 256px 256px"}
               />
             </div>
@@ -50,16 +49,10 @@ import EventDuration from './event_duration';
 };
 
 EventDetails.propTypes = {
-  currentEvent: PropTypes.object,
   event: PropTypes.object,
   isCurrent: PropTypes.bool,
   expanded: PropTypes.bool,
   handleExpandDetails: PropTypes.func.isRequired,
 };
 
-
-const mapStateToProps = state => ({
-  currentEvent: state.calendar.currentEvent,
-});
-
-export default connect(mapStateToProps)(EventDetails);
+export default EventDetails;

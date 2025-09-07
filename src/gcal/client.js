@@ -102,20 +102,20 @@ module.exports = class Client {
     }
   }
 
-  async insertEvent(duration = 15) {
+  async insertEvent(duration = 15, startTime = null) {
     try {
       if (!duration || duration <= 0 || duration > 480) { // Max 8 hours
         throw new Error('Invalid duration: must be between 1 and 480 minutes');
       }
 
-      const now = new Date();
-      const endTime = new Date(now.getTime() + duration * MILLISECONDS_PER_MINUTE);
+      const start = startTime ? new Date(startTime) : new Date();
+      const endTime = new Date(start.getTime() + duration * MILLISECONDS_PER_MINUTE);
       
       const resource = {
         summary: `Quick Reservation ${duration} min`,
         description: `Quick Reservation for ${duration} minutes`,
         start: {
-          dateTime: now.toISOString(),
+          dateTime: start.toISOString(),
         },
         end: {
           dateTime: endTime.toISOString(),

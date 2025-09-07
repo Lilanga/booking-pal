@@ -46,6 +46,7 @@ const Status = ({
     <Free
       onClick15={() => onQuickReservation(15)}
       onClick30={() => onQuickReservation(30)}
+      onCustomBooking={(duration, startTime) => onQuickReservation(duration, startTime)}
       nextEvent={nextEvent}
       key={1}
     />;

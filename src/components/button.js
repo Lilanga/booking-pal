@@ -9,7 +9,7 @@ const Button = (props) => {
   const isUnmountedRef = useRef(false);
 
   const handleClick = useCallback((e) => {
-    if (isUnmountedRef.current || clicked) {
+    if (isUnmountedRef.current || clicked || disabled) {
       return;
     }
 
@@ -35,7 +35,7 @@ const Button = (props) => {
         console.error('Error in button click handler:', error);
       }
     }
-  }, [clicked, restProps.handleClick]);
+  }, [clicked, disabled, restProps.handleClick]);
 
   useEffect(() => {
     return () => {
@@ -54,7 +54,7 @@ const Button = (props) => {
   }, restProps.className);
 
   return (
-    <button onClick={handleClick} className={btnClasses} disabled={clicked} type="button">
+    <button onClick={handleClick} className={btnClasses} disabled={clicked || disabled} type="button">
       <i className={iconClasses} />
     </button>
   );

@@ -275,7 +275,7 @@ class OfflineManager {
         return new Promise((resolve, reject) => {
           const apiManager = getCalendarAPIManager();
           
-          window.calendarAPI.quickReservation(action.duration);
+          window.calendarAPI.quickReservation(action.duration, action.startTime);
           
           const successHandler = () => {
             apiManager.removeListener('quick-reservation-success', successHandler);

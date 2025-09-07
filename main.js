@@ -418,8 +418,8 @@ async function initializeApp() {
       })
     );
 
-    ipcMain.on('calendar:quick-reservation', (event, duration) => {
-      client.insertEvent(duration)
+    ipcMain.on('calendar:quick-reservation', (event, duration, startTime) => {
+      client.insertEvent(duration, startTime)
         .then(response => { 
           if (!event.sender.isDestroyed()) {
             event.sender.send('calendar:quick-reservation-success', response);

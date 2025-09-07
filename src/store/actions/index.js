@@ -100,13 +100,13 @@ export const updateEvents = (events) => dispatch => {
   });
 };
 
-export const quickReservation = duration => dispatch => {
+export const quickReservation = (duration, startTime = null) => dispatch => {
   const status = offlineManager.getStatus();
   
   // If offline, queue the action
   if (!status.isOnline) {
     console.log('Offline - queueing quick reservation');
-    const queueId = offlineManager.queueAction('QUICK_RESERVATION', { duration });
+    const queueId = offlineManager.queueAction('QUICK_RESERVATION', { duration, startTime });
     
     if (queueId) {
       // For offline feedback, we could show a temporary optimistic update
@@ -137,7 +137,7 @@ export const quickReservation = duration => dispatch => {
     const apiManager = getCalendarAPIManager();
     
     // Reservation request
-    window.calendarAPI.quickReservation(duration);
+    window.calendarAPI.quickReservation(duration, startTime);
     
     apiManager.addListener('quick-reservation-success', (_event, events) => {
       try {
