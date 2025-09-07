@@ -46,7 +46,7 @@ button {
     box-shadow: 0 8px 25px rgba(46, 46, 46, 0.15), 0 4px 10px rgba(46, 46, 46, 0.1), 0 0 0 4px rgba($primary-blue, 0.3);
   }
 
-  &:active {
+  &:active:not(.disabled) {
     transform: scale(0.95);
     box-shadow: 0 4px 15px rgba(46, 46, 46, 0.2), 0 2px 5px rgba(46, 46, 46, 0.15);
   }
@@ -62,8 +62,40 @@ button {
     }
   }
 
+  &.disabled {
+    background: linear-gradient(135deg, #f5f5f5, #e8e8e8);
+    cursor: not-allowed;
+    box-shadow: 0 2px 8px rgba(46, 46, 46, 0.08), 0 1px 3px rgba(46, 46, 46, 0.05);
+    
+    i.icon {
+      opacity: 0.3;
+      filter: brightness(0.6) saturate(0);
+    }
+
+    &:hover {
+      transform: none;
+      box-shadow: 0 2px 8px rgba(46, 46, 46, 0.08), 0 1px 3px rgba(46, 46, 46, 0.05);
+      
+      i.icon {
+        opacity: 0.3;
+        filter: brightness(0.6) saturate(0);
+        transform: none;
+      }
+    }
+
+    &:active {
+      transform: none;
+      box-shadow: 0 2px 8px rgba(46, 46, 46, 0.08), 0 1px 3px rgba(46, 46, 46, 0.05);
+
+      i.icon {
+        transform: none;
+        opacity: 0.3;
+      }
+    }
+  }
+
   // Hover effect for development/mouse users
-  &:hover:not(:active) {
+  &:hover:not(:active):not(.disabled) {
     transform: translateY(-2px);
     box-shadow: 0 12px 30px rgba(46, 46, 46, 0.18), 0 6px 15px rgba(46, 46, 46, 0.12);
 
@@ -74,7 +106,7 @@ button {
     }
   }
 
-  &:active {
+  &:active:not(.disabled) {
     i.icon {
       transform: scale(0.95);
       opacity: 0.7;
@@ -134,5 +166,13 @@ i.icon {
     background-image: url('../icons/cancel.svg');
     background-position: center center;
     color: red;
+  }
+
+  &.icon-booking {
+    background-image: url('../icons/booking.svg');
+    background-position: center center;
+    background-size: 50%;
+    opacity: 0.7;
+    filter: brightness(0.4) sepia(1) saturate(1.5) hue-rotate(180deg);
   }
 }
